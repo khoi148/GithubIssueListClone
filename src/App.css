@@ -2,3 +2,41 @@
   width: 40px;
   height: 40px;
 }
+
+.comment-place {
+  border-top: 1px solid gray;
+  margin-top: 20px;
+}
+
+.labels-btn {
+  outline: none;
+  border: none;
+}
+
+.labels-btn:focus {
+  outline: none;
+}
+
+.title-issue {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+}
+
+.title-userissue {
+  font-weight: bolder;
+  margin-left: 5px;
+}
+
+.comment-headers {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-reactions {
+  width: 20px;
+  height: 20px;
+}

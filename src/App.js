@@ -6,11 +6,14 @@ const clientId = process.env.REACT_APP_CLIENT_ID;
 function App(props) {
   const [token, setToken] = useState(null);
   let [showModal, setShowModal] = useState(false);
-  let [commentExist, setCommentExist] = useState(null);
+  let [commentExist, setCommentExist] = useState([]);
   let [issue, setIssue] = useState(null);
-  let [createComment, setCreateComment] = useState(null)
+  let [createComment, setCreateComment] = useState("");
+  let [reactionsThread, setReactionsThread] = useState([]);
+  let [reactionsComments, setReactionsComments] = useState([]);
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
-  //  install markdown : npm install --save react-markdown
+  // install markdown : npm install --save react-markdown
+  // install moment: npm install --save moment react-moment
   const user = "ldchinhcr";
   const repos = "test-issue";
   const ids = "2";
@@ -19,7 +22,7 @@ function App(props) {
     const existingToken = localStorage.getItem("token");
     const accessToken =
       window.location.search.split("=")[0] === "?access_token"
-        ? window.location.search.split("=")[1]
+        ? window.location.search.split("&scope")[0].split("access_token=")[1]
         : null;
 
     if (!accessToken && !existingToken) {
@@ -42,56 +45,149 @@ function App(props) {
 
   const toggleIssue = async () => {
     // add due to id later , change: ids dynamically
-    const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/vnd.github.squirrel-girl-preview+json",
-      }
-    });
-    const responseJson = await response.json();
-    const urlRec = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/reactions`;
-    const responseRec = await fetch(urlRec, {
-      method: "GET",
-      headers: {
-        Accept: "application/vnd.github.squirrel-girl-preview+json"
-      }
-    });
-    const responseJsonRec = await responseRec.json();
-    console.log(responseJson);
-    setIssue(responseJson);
-    if (responseJson.comments > 0) {
-      const urlComment = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
-      const responseComment = await fetch(urlComment, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/vnd.github.squirrel-girl-preview+json"
+    let issueSide = {};
+    try {
+      try {
+        const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/vnd.github.squirrel-girl-preview+json"
+          }
+        });
+        const responseJson = await response.json();
+        if (response.ok) {
+          setIssue(responseJson);
+          issueSide = responseJson;
         }
-      });
-      const respCommentJS = await responseComment.json();
-      setCommentExist(respCommentJS);
+      } catch (e) {
+        console.log(e);
+      }
+      try {
+        const urlRec = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/reactions`;
+        const responseRec = await fetch(urlRec, {
+          method: "GET",
+          headers: {
+            Accept: "application/vnd.github.squirrel-girl-preview+json"
+          }
+        });
+        const responseJsonRec = await responseRec.json();
+        if (responseRec.ok) {
+          setReactionsThread(responseJsonRec);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+
+      if (issueSide.comments > 0) {
+        try {
+          const urlComment = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
+          const responseComment = await fetch(urlComment, {
+            method: "GET",
+            headers: {
+              "Content-Type":
+                "application/vnd.github.squirrel-girl-preview+json"
+            }
+          });
+          const respCommentJS = await responseComment.json();
+          if (responseComment.ok) {
+            setCommentExist(respCommentJS);
+            console.log("thread", respCommentJS);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+        try {
+          const urlComRec = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/reactions`;
+          const responseComRec = await fetch(urlComRec, {
+            method: "GET",
+            headers: {
+              Accept: "application/vnd.github.squirrel-girl-preview+json"
+            }
+          });
+          const responseComRecJS = await responseComRec.json();
+          if (responseComRec.ok) {
+            setReactionsComments(responseComRecJS);
+            console.log("comments", responseComRecJS);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      setShowModal(true);
+    } catch (e) {
+      console.log(e);
     }
-    setShowModal(true);
   };
 
-  const postComment = async () => {
-    if (!createComment) {
+  const postComment = async comment => {
+    if (!comment) {
       alert("Don't leave the comment blank");
       return false;
     }
-    const issue = { body: createComment };
-    const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
+    try {
+      const issue = { body: comment };
+      const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `token ${token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        setCreateComment("");
+        toggleIssue(); //id
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `token ${token}`
-      },
-      body: JSON.stringify(issue)
-    });
-    setCreateComment("");
-    toggleIssue();//id
+  const editComment = async idEdit => {
+    let value = prompt("Type what you want to change");
+    if (!value) {
+      alert("Don't leave the comment blank");
+      return false;
+    }
+    try {
+      const issue = { body: value };
+      const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idEdit}`;
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `token ${token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        alert("Your comment had been changed successfully!");
+        toggleIssue(); //id
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteComment = async idDelete => {
+    try {
+      const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idDelete}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/vnd.github.v3.full+json',
+          Authorization: `token ${token}`
+        }
+      });
+      if (response.ok) {
+        alert("Your comment had been deleted successfully!");
+        toggleIssue(); //id
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   if (!token || !issue) {
@@ -105,12 +201,19 @@ function App(props) {
   }
   return (
     <div>
-      {console.log("rururn")}
+      <button onClick={() => toggleIssue()}>Here is issue</button>
       <ShowIssue
         toggleModal={showModal}
         setShowModal={setShowModal}
         issueSelected={issue}
         CommentsList={commentExist}
+        setCreateComment={setCreateComment}
+        createComment={createComment}
+        postComment={postComment}
+        reactionsThread={reactionsThread}
+        reactionsComments={reactionsComments}
+        editComment={editComment}
+        deleteComment={deleteComment}
       />
     </div>
   );
