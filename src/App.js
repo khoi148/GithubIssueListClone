@@ -102,26 +102,6 @@ function App(props) {
     }
   };
 
-<<<<<<< HEAD
-=======
-  const emojiComment = async(idComment) => {
-    try {
-      const urlComRec = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idComment}/reactions`;
-      const responseComRec = await fetch(urlComRec, {
-        method: "GET",
-        headers: {
-          Accept: "application/vnd.github.squirrel-girl-preview+json"
-        }
-      });
-      const responseComRecJS = await responseComRec.json();
-      return responseComRecJS
-    } catch (e) {
-      console.log(e);
-    } 
-  }
-
-
->>>>>>> 4da7dfc584bbb451ef423bf1ec2725f5e46d1986
   const postComment = async comment => {
     if (!comment) {
       alert("Don't leave the comment blank");
@@ -218,7 +198,6 @@ function App(props) {
         // reactionsComments={reactionsComments}
         editComment={editComment}
         deleteComment={deleteComment}
-        emojiComment={emojiComment}
       />
     </div>
   );
