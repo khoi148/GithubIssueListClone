@@ -7,7 +7,6 @@ import Comment from "./Comment.js";
 
 const ReactDOM = require("react-dom");
 const ReactMarkdown = require("react-markdown");
-let html1 = null;
 
 export default function ShowIssue(props) {
   const emoji = {
@@ -46,6 +45,27 @@ export default function ShowIssue(props) {
       </span>
     );
   });
+
+  const addReactThread = async idAdd => {
+    try {
+      let issue = { content: idAdd };
+      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${props.ids}/reactions`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/vnd.github.squirrel-girl-preview+json",
+          Authorization: `token ${props.token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        alert("Your reaction had been added successfully!");
+        props.toggleIssue(); //id id issue
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   if (infoIssue === null) {
     return;
@@ -120,20 +140,135 @@ export default function ShowIssue(props) {
           </span>
         </div>
         <div
+          className="d-flex justify-content-between"
           style={{
             borderBottom: "1px solid gray",
             paddingBottom: "10px",
             paddingTop: "10px"
           }}
         >
-          <Image
-            src={infoIssue.user.avatar_url}
-            alt={infoIssue.user.login}
-            className="avatar"
-          />
-          <span className="title-userissue">{infoIssue.user.login}</span>{" "}
-          commented <Moment fromNow>{infoIssue.created_at}</Moment>
+          <div>
+            <Image
+              src={infoIssue.user.avatar_url}
+              alt={infoIssue.user.login}
+              className="avatar"
+            />
+            <span className="title-userissue">{infoIssue.user.login}</span>{" "}
+            commented <Moment fromNow>{infoIssue.created_at}</Moment>
+          </div>
+
+          <div className="dropdown mr-1">
+            <button
+              className="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="dropdownMenu2"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Reactions
+            </button>
+            <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("+1")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png"
+                  alt="+1"
+                />{" "}
+                Like
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("-1")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f44e.png"
+                  alt="-1"
+                />{" "}
+                Dislike
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("laugh")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png"
+                  alt="laugh"
+                />{" "}
+                Laugh
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("confused")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f615.png"
+                  alt="confused"
+                />{" "}
+                Confused
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("heart")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/2764.png"
+                  alt="heart"
+                />{" "}
+                Love
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("hooray")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f389.png"
+                  alt="hooray"
+                />{" "}
+                Hooray
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("rocket")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f680.png"
+                  alt="rocket"
+                />{" "}
+                Rocket
+              </button>
+              <button
+                className="dropdown-item"
+                onClick={() => addReactThread("eyes")}
+                type="button"
+              >
+                <Image
+                  className="icon-reactions"
+                  src="https://github.githubassets.com/images/icons/emoji/unicode/1f440.png"
+                  alt="eyes"
+                />{" "}
+                Eyes
+              </button>
+            </div>
+          </div>
         </div>
+
         <div>
           <ReactMarkdown
             includeNodeIndex={true}
@@ -156,11 +291,17 @@ export default function ShowIssue(props) {
         <div>
           {props.CommentsList &&
             props.CommentsList.map(item => {
-              //returns a promise due to async function map
-              // console.log("testing", html1);
-
               return (
-                <Comment item={item} user={props.user} repos={props.repos} />
+                <Comment
+                  postComment={props.postComment}
+                  editComment={props.editComment}
+                  item={item}
+                  user={props.user}
+                  repos={props.repos}
+                  token={props.token}
+                  deleteComment={props.deleteComment}
+                  toggleIssue={props.toggleIssue}
+                />
               );
             })}
         </div>

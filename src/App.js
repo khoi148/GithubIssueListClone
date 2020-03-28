@@ -13,9 +13,9 @@ function App(props) {
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
   // install markdown : npm install --save react-markdown
   // install moment: npm install --save moment react-moment
-  const user = "ldchinhcr";
-  const repos = "test-issue";
-  const ids = "2";
+  const user = "facebook";
+  const repos = "react";
+  const ids = "17665";
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
   useEffect(() => {
     const existingToken = localStorage.getItem("token");
@@ -119,6 +119,7 @@ function App(props) {
         body: JSON.stringify(issue)
       });
       if (response.ok) {
+        alert("Your comment had been created successfully!");
         setCreateComment("");
         toggleIssue(); //id
       }
@@ -165,7 +166,7 @@ function App(props) {
       });
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
-        toggleIssue(); //id
+        toggleIssue(); //id issue
       }
     } catch (e) {
       console.log(e);
@@ -185,6 +186,8 @@ function App(props) {
     <div>
       <button onClick={() => toggleIssue()}>Here is issue</button>
       <ShowIssue
+        {...props}
+        ids={ids}
         user={user}
         repos={repos}
         toggleModal={showModal}
@@ -195,9 +198,10 @@ function App(props) {
         createComment={createComment}
         postComment={postComment}
         reactionsThread={reactionsThread}
-        // reactionsComments={reactionsComments}
         editComment={editComment}
         deleteComment={deleteComment}
+        token={token}
+        toggleIssue={toggleIssue}
       />
     </div>
   );
