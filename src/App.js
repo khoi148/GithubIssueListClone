@@ -48,9 +48,10 @@ export default function App() {
     const url1 =
       URL_SEARCH_REPOS_BEG +
       additional_qualifier +
-      `${query}+in:name+sort:interactions&per_page=20&page=1`;
+      `${query}+in:name+sort:interactions&per_page=15&page=1`;
     //this url searches for a specific repo of an org
     const url2 = URL_SEARCH_REPOS_BEG + additional_qualifier + `repo:${query}`;
+
     url = query.includes("/") && query.split("/").length === 2 ? url2 : url1;
 
     const response = await fetch(url, {
@@ -69,12 +70,12 @@ export default function App() {
     const url1 =
       URL_SEARCH_ISSUES_BEG +
       additional_qualifier +
-      `repo:${query}+sort:updated+type:issue`;
+      `repo:${query}+sort:updated+type:issue&per_page=15&page=1`;
     //this url searches for issues with the query in their title
     const url2 =
       URL_SEARCH_ISSUES_BEG +
       additional_qualifier +
-      `${query}+sort:updated+in:title+type:issue`;
+      `${query}+sort:updated+in:title+type:issue&per_page=15&page=1`;
     url = query.includes("/") && query.split("/").length === 2 ? url1 : url2;
 
     const response = await fetch(url, {
