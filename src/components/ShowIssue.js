@@ -6,8 +6,7 @@ import Moment from "react-moment";
 
 const ReactDOM = require("react-dom");
 const ReactMarkdown = require("react-markdown");
-let html;
-
+let totalEmojiComment;
 export default function ShowIssue(props) {
   // let [reactionsComments, setReactionsComments] = useState([]);
   const emoji = {
@@ -46,45 +45,23 @@ export default function ShowIssue(props) {
   });
 
 /////////////////////////////////////
-const emojiComment = async(idComment) => {
-  // try {
-    console.log(idComment)
-    const urlComRec = `https://api.github.com/repos/${props.user}/${props.repos}/issues/comments/${idComment}/reactions`; //fix here fix here.......
-    const responseComRec = await fetch(urlComRec, {
-      method: "GET",
-      headers: {
-        Accept: "application/vnd.github.squirrel-girl-preview+json"
+
+
+const getRec = async(idGet) => {
+    if (idGet) {
+    let emojiComment = await idGet.map(item => item.content);
+    totalEmojiComment = await emojiComment.reduce((total, content) => {
+      if (content in total) {
+        total[content]++;
+      } else {
+        total[content] = 1;
       }
-    });
-    const responseComRecJS = await responseComRec.json();
-    if (responseComRec.ok) {
-      let emojiComment = responseComRecJS.map(item => item.content);
-      let totalEmojiComment = emojiComment.reduce((total, content) => {
-        if (content in total) {
-          total[content]++;
-        } else {
-          total[content] = 1;
-        }
-        return total;
-      }, {});
-      let emojiComArray = Object.keys(totalEmojiComment);
-      let htmlforEmojiCom = emojiComArray.map(item => {
-        return (
-          <span className="emoji-showing">
-           {item && <Image className='icon-reactions' src={emoji[item]}/>} {item && totalEmojiComment[item]}</span>
-        );
-      });
-      // console.log('html',emojiComArray)
-      // console.log('html2', htmlforEmojiCom)
-      return htmlforEmojiCom
-    }
-
-  // } catch (e) {
-  //   console.log(e);
-  // } 
-}
-
-
+      return total;
+    }, {});
+    let emojiComArray = Object.keys(totalEmojiComment);
+    return emojiComArray
+  } else {return ('')}
+  }
 
 
   if (infoIssue === null) {
@@ -183,16 +160,21 @@ const emojiComment = async(idComment) => {
           <span style={{ fontSize: "12px", fontStyle: "italic" }}>
             Updated <Moment fromNow>{infoIssue.updated_at}</Moment>
           </span>
-          <div>{htmlforEmoji}</div>
+          <div style={{marginTop: '10px', marginBottom: '10px', borderRadius: '10px'}}>{htmlforEmoji}</div>
         </div>
         <div>
           {props.CommentsList &&
             props.CommentsList.map(item => {
-
-              // if (`${emojiComment(item.id)}`) {
-                html = emojiComment(item.id)
+              // let html;
+              // try {
                 
+              //   let v = emojiComment(item.id).then((id) => getRec(id))
+              //   if (v) {
+              //   html = emojiComment(item.id) ? v : null;
+              //   console.log(html)
               // }
+              
+              // } catch(e) {console.log(e)}
               return (
                 <div className="comment-place">
                   <div
@@ -335,9 +317,13 @@ const emojiComment = async(idComment) => {
                       Updated <Moment fromNow>{item.updated_at}</Moment>
                     </span>
                     <span>
-                    {console.log(html)}
-                    {html}
-                    </span>///////////////Not showing
+                    {() => getRec(()=> props.emojiComment(`${item.id}`)).map(emo => {
+                      return (
+                        <span className="emoji-showing">
+                         {emo && <Image className='icon-reactions' src={emoji[emo]}/>} {emo && totalEmojiComment[emo]}</span>
+                      );
+                    })}
+                    </span>
                   </div>
                 </div>
               );

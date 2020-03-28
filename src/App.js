@@ -102,6 +102,22 @@ function App(props) {
     }
   };
 
+  const emojiComment = async(idComment) => {
+    try {
+      const urlComRec = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idComment}/reactions`;
+      const responseComRec = await fetch(urlComRec, {
+        method: "GET",
+        headers: {
+          Accept: "application/vnd.github.squirrel-girl-preview+json"
+        }
+      });
+      const responseComRecJS = await responseComRec.json();
+      return responseComRecJS
+    } catch (e) {
+      console.log(e);
+    } 
+  }
+
 
   const postComment = async comment => {
     if (!comment) {
@@ -199,7 +215,7 @@ function App(props) {
         // reactionsComments={reactionsComments}
         editComment={editComment}
         deleteComment={deleteComment}
-        // emojiComment={emojiComment}
+        emojiComment={emojiComment}
       />
     </div>
   );
