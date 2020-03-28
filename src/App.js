@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import ShowIssue from "./components/ShowIssue";
+import NewIssue from './components/NewIssue'
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 function App(props) {
+  let [createIssueModal, setCreateIssueModal] = useState(false);
+  let [dataSubmit, setDataSubmit] = useState({title: '', content: ''});
   const [token, setToken] = useState(null);
   let [showModal, setShowModal] = useState(false);
   let [commentExist, setCommentExist] = useState([]);
@@ -15,7 +18,7 @@ function App(props) {
   // install moment: npm install --save moment react-moment
   const user = "ldchinhcr";
   const repos = "test-issue";
-  const ids = "2";
+  const ids = '2';
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
   useEffect(() => {
     const existingToken = localStorage.getItem("token");
@@ -42,7 +45,7 @@ function App(props) {
     }
   }, []);
 
-  const toggleIssue = async () => {
+  const toggleIssue = async() => {
     // add due to id later , change: ids dynamically
     let issueSide = {};
     try {
@@ -101,6 +104,43 @@ function App(props) {
       console.log(e);
     }
   };
+
+  const onInputChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setDataSubmit({
+      ...dataSubmit,
+      [name]: value,
+   })
+  }
+
+  const postIssue = async(el) => {
+    el.preventDefault()
+    if(!dataSubmit.title || !dataSubmit.content) {
+      alert('Dont leave title or content box blank!!')
+      return false;
+    }
+    try {
+      const issue = {title: dataSubmit.title, body: dataSubmit.content}
+      const url = `https://api.github.com/repos/${user}/${repos}/issues`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `token ${token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        alert("Your issue had been created successfully!");
+        setDataSubmit({title: '', content: ''});
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+
 
   const postComment = async comment => {
     if (!comment) {
@@ -178,13 +218,17 @@ function App(props) {
     return (
       <div>
         <div>On Loading...</div>
-        <button onClick={() => toggleIssue()}>Here is issue</button>
+        <button onClick={() => setCreateIssueModal(true)}>Make new issue</button>
+        <NewIssue dataSubmit={dataSubmit} setDataSubmit={setDataSubmit} toggleCreateIssue={createIssueModal} setCreateIssue={setCreateIssueModal} postIssue={postIssue} onInputChange={onInputChange}/>
+        <button onClick={() => toggleIssue()}>Here is show an issue</button>
       </div>
     );
   }
   return (
     <div>
+      <button onClick={() => setCreateIssueModal(true)}>Make new issue</button>
       <button onClick={() => toggleIssue()}>Here is issue</button>
+      <NewIssue dataSubmit={dataSubmit} setDataSubmit={setDataSubmit} toggleCreateIssue={createIssueModal} setCreateIssue={setCreateIssueModal} postIssue={postIssue} onInputChange={onInputChange}/>
       <ShowIssue
         {...props}
         ids={ids}
