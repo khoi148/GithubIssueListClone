@@ -13,9 +13,9 @@ function App(props) {
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
   // install markdown : npm install --save react-markdown
   // install moment: npm install --save moment react-moment
-  const user = "facebook";
-  const repos = "react";
-  const ids = "17665";
+  const user = "ldchinhcr";
+  const repos = "test-issue";
+  const ids = "2";
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
   useEffect(() => {
     const existingToken = localStorage.getItem("token");

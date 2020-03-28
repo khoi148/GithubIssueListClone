@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Open from '../assets/icon/open.svg';
+import Close from '../assets/icon/close.svg';
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactModal from "react-modal";
 import { Image, Form, Button, Tab, Tabs } from "react-bootstrap";
@@ -118,7 +120,7 @@ export default function ShowIssue(props) {
                 color: "white"
               }}
             >
-              ◌ Open
+              <Image src={Open}/>{' '}Open
             </span>
           ) : (
             <span
@@ -129,7 +131,7 @@ export default function ShowIssue(props) {
                 color: "white"
               }}
             >
-              √ Closed
+            <Image src={Close}/>{' '}Closed
             </span>
           )}
           <span className="title-userissue">{infoIssue.user.login}</span>
