@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 let defaultOption = "Repo";
+
 export default function SearchBar(props) {
   const [filterText, setFilterText] = useState("Filter");
   function filterSelect(event) {

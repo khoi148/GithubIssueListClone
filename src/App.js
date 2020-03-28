@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import ListOfIssues from "./components/ListOfIssues.js";
+import ListOfResults from "./components/ListOfResults.js";
 import ProjectTabs from "./components/ProjectTabs.js";
 import Navbar from "./components/Navbar.js";
 import SearchBar from "./components/SearchBar.js";
 
+let URL_SEARCH_REPOS_BEG = `https://api.github.com/search/repositories?q=`;
+let URL_SEARCH_ISSUES_BEG = `https://api.github.com/search/issues?q=`;
+let additional_qualifier = "";
+let url = "";
 export default function App() {
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
-  const [page, setPage] = useState(1);
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
-  const [repoOrIssue, setRepoOrIssue] = useState(true);
+  const [displayWhat, setDisplayWhat] = useState({ repo: false, issue: false });
 
   function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
@@ -40,14 +43,15 @@ export default function App() {
       setToken(existingToken);
     }
   }
-
   async function apiSearchRepos(query = "khoi148") {
     //this url searches for repositories with [query] in their name, and sorts the results by interactions first in descending order
-    const url1 = `https://api.github.com/search/repositories?q=${query}+in:name+sort:interactions&per_page=20&page=${page}`;
+    const url1 =
+      URL_SEARCH_REPOS_BEG +
+      additional_qualifier +
+      `${query}+in:name+sort:interactions&per_page=20&page=1`;
     //this url searches for a specific repo of an org
-    const url2 = `https://api.github.com/search/repositories?q=repo:${query}`;
-    let url =
-      query.includes("/") && query.split("/").length === 2 ? url2 : url1;
+    const url2 = URL_SEARCH_REPOS_BEG + additional_qualifier + `repo:${query}`;
+    url = query.includes("/") && query.split("/").length === 2 ? url2 : url1;
 
     const response = await fetch(url, {
       method: "GET",
@@ -57,15 +61,21 @@ export default function App() {
     });
     const responseJson = await response.json();
     setRepos(responseJson.items); //1 page of results in an array
+    setDisplayWhat({ repo: true, issue: false });
     console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook") {
     //this url searches for issues of a specific [repo], and sorts the results in an array, with most updated issues first
-    const url1 = `https://api.github.com/search/issues?q=repo:${query}+sort:updated+type:issue`;
+    const url1 =
+      URL_SEARCH_ISSUES_BEG +
+      additional_qualifier +
+      `repo:${query}+sort:updated+type:issue`;
     //this url searches for issues with the query in their title
-    const url2 = `https://api.github.com/search/issues?q=${query}+sort:updated+in:title+type:issue`;
-    let url =
-      query.includes("/") && query.split("/").length === 2 ? url1 : url2;
+    const url2 =
+      URL_SEARCH_ISSUES_BEG +
+      additional_qualifier +
+      `${query}+sort:updated+in:title+type:issue`;
+    url = query.includes("/") && query.split("/").length === 2 ? url1 : url2;
 
     const response = await fetch(url, {
       method: "GET",
@@ -75,6 +85,7 @@ export default function App() {
     });
     const responseJson = await response.json();
     setIssues(responseJson.items);
+    setDisplayWhat({ repo: false, issue: true });
     console.log("issues", responseJson);
   }
   useEffect(() => setTokenFunc(), []);
@@ -146,9 +157,10 @@ export default function App() {
             </div>
           </div>
 
-          <ListOfIssues
+          <ListOfResults
             issues={issues}
-            apiSearchIssuesMethod={input => apiSearchIssues(input)}
+            repos={repos}
+            displayWhat={displayWhat}
           />
         </div>
       </div>

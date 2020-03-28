@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-export default function ListOfIssues(props) {
+export default function ListOfResults(props) {
+  //props. repos | issues | displayWhat {repo: false, issue: false}
   return (
     <div
       className="row mt-2"
@@ -15,10 +16,7 @@ export default function ListOfIssues(props) {
           borderTopRightRadius: "10px"
         }}
       >
-        <div className="col-3">
-          <a href="#">22 Open</a>
-          <a href="#">4 Closed</a>
-        </div>
+        <div className="col-3"></div>
         <div className="col-9 d-flex justify-content-end">
           <div className="btn-group p-0 ml-2" style={{ height: "30px" }}>
             <div className="btn-group">
@@ -84,6 +82,7 @@ export default function ListOfIssues(props) {
           </div>
         </div>
       </div>
+
       <div className="row p-3 bg-warning w-100 m-0">
         <div className="col-11 bg-success">
           <h5>
