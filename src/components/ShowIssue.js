@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactModal from "react-modal";
-import { Image, Form, Button } from "react-bootstrap";
+import { Image, Form, Button, Tab, Tabs } from "react-bootstrap";
 import Moment from "react-moment";
 import Comment from "./Comment.js";
 
@@ -26,6 +26,7 @@ export default function ShowIssue(props) {
       "https://github.githubassets.com/images/icons/emoji/unicode/1f680.png",
     eyes: "https://github.githubassets.com/images/icons/emoji/unicode/1f440.png"
   };
+  const [key, setKey] = useState('comment');
   let infoIssue = props.issueSelected;
   let emojiThread = props.reactionsThread.map(item => item.content);
   let totalEmojiThread = emojiThread.reduce((total, content) => {
@@ -315,13 +316,24 @@ export default function ShowIssue(props) {
           >
             <Form.Group controlId="exampleForm.ControlTextarea1">
               <Form.Label>Leave Comment</Form.Label>
-              <Form.Control
-                placeholder="Your comment"
-                value={props.createComment}
-                onChange={el => props.setCreateComment(el.target.value)}
-                as="textarea"
-                rows="3"
-              />
+              <Tabs
+                    id="controlled-tab-example"
+                    activeKey={key}
+                    onSelect={(k) => setKey(k)}
+                  >
+                    <Tab eventKey="comment" title="Comment Box">
+                    <Form.Control
+                    placeholder="Your comment"
+                    value={props.createComment}
+                    onChange={el => props.setCreateComment(el.target.value)}
+                    as="textarea"
+                    rows="3"
+                  />
+                    </Tab>
+                    <Tab eventKey="preview" title="Preview">
+                    <p className='mt-3'>{props.createComment}</p>
+                    </Tab>
+                  </Tabs>
               <div className="d-flex justify-content-end align-self-end">
                 <Button
                   className="my-2 btn-secondary"
