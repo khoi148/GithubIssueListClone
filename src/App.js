@@ -10,7 +10,6 @@ function App(props) {
   let [issue, setIssue] = useState(null);
   let [createComment, setCreateComment] = useState("");
   let [reactionsThread, setReactionsThread] = useState([]);
-  let [reactionsComments, setReactionsComments] = useState([]);
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
   // install markdown : npm install --save react-markdown
   // install moment: npm install --save moment react-moment
@@ -72,7 +71,7 @@ function App(props) {
           }
         });
         const responseJsonRec = await responseRec.json();
-        if (responseRec.ok) {
+        if (responseRec.ok && responseJsonRec) {
           setReactionsThread(responseJsonRec);
         }
       } catch (e) {
@@ -92,23 +91,6 @@ function App(props) {
           const respCommentJS = await responseComment.json();
           if (responseComment.ok) {
             setCommentExist(respCommentJS);
-            console.log("thread", respCommentJS);
-          }
-        } catch (e) {
-          console.log(e);
-        }
-        try {
-          const urlComRec = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/reactions`;
-          const responseComRec = await fetch(urlComRec, {
-            method: "GET",
-            headers: {
-              Accept: "application/vnd.github.squirrel-girl-preview+json"
-            }
-          });
-          const responseComRecJS = await responseComRec.json();
-          if (responseComRec.ok) {
-            setReactionsComments(responseComRecJS);
-            console.log("comments", responseComRecJS);
           }
         } catch (e) {
           console.log(e);
@@ -119,6 +101,7 @@ function App(props) {
       console.log(e);
     }
   };
+
 
   const postComment = async comment => {
     if (!comment) {
@@ -177,7 +160,7 @@ function App(props) {
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
-          'Content-Type': 'application/vnd.github.v3.full+json',
+          'Content-Type': 'application/vnd.github.squirrel-girl-preview+json',
           Authorization: `token ${token}`
         }
       });
@@ -203,6 +186,8 @@ function App(props) {
     <div>
       <button onClick={() => toggleIssue()}>Here is issue</button>
       <ShowIssue
+        user={user}
+        repos={repos}
         toggleModal={showModal}
         setShowModal={setShowModal}
         issueSelected={issue}
@@ -211,9 +196,10 @@ function App(props) {
         createComment={createComment}
         postComment={postComment}
         reactionsThread={reactionsThread}
-        reactionsComments={reactionsComments}
+        // reactionsComments={reactionsComments}
         editComment={editComment}
         deleteComment={deleteComment}
+        // emojiComment={emojiComment}
       />
     </div>
   );
