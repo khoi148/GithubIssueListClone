@@ -47,8 +47,6 @@ export default function ShowIssue(props) {
     );
   });
 
-  /////////////////////////////////////
-
   if (infoIssue === null) {
     return;
   } else {
@@ -145,7 +143,15 @@ export default function ShowIssue(props) {
           <span style={{ fontSize: "12px", fontStyle: "italic" }}>
             Updated <Moment fromNow>{infoIssue.updated_at}</Moment>
           </span>
-          <div>{htmlforEmoji}</div>
+          <div
+            style={{
+              marginTop: "10px",
+              marginBottom: "10px",
+              borderRadius: "10px"
+            }}
+          >
+            {htmlforEmoji}
+          </div>
         </div>
         <div>
           {props.CommentsList &&
