@@ -102,7 +102,6 @@ function App(props) {
     }
   };
 
-
   const postComment = async comment => {
     if (!comment) {
       alert("Don't leave the comment blank");
@@ -160,7 +159,7 @@ function App(props) {
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
-          'Content-Type': 'application/vnd.github.squirrel-girl-preview+json',
+          "Content-Type": "application/vnd.github.squirrel-girl-preview+json",
           Authorization: `token ${token}`
         }
       });
