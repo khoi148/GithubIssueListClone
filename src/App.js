@@ -21,8 +21,6 @@ export default function App() {
   let [commentExist, setCommentExist] = useState([]);
   let [issueInModal, setIssueInModal] = useState(null);
 
-  //So you CANNOT CHANGE ALl 'issues' cause I'm useing 'issues'. Don't use replace all unless you know fore sure 'issue' isb't used bhy ny code
-
   let [createComment, setCreateComment] = useState("");
   let [reactionsThread, setReactionsThread] = useState([]);
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
@@ -39,7 +37,10 @@ export default function App() {
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
-  const [displayWhat, setDisplayWhat] = useState({ repo: true, issue: false });
+  const [displayWhat, setDisplayWhat] = useState({
+    repo: true,
+    issue: false
+  });
   function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
@@ -57,13 +58,13 @@ export default function App() {
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
-      localStorage.setItem("token", accessToken.split("&")[0]); //store token in local storage
-      setToken(accessToken);
+      localStorage.setItem("token"); //store token in local storage
+      setToken(accessToken.split("&")[0]);
     }
 
     if (existingToken) {
-      // console.log("existing token: ", existingToken.split("&")[0]);
-      setToken(existingToken);
+      console.log("existing token: ", existingToken);
+      setToken(existingToken.split("&")[0]);
     }
   }
   async function apiSearchRepos(query = "khoi148", pageSet = 1) {
@@ -358,12 +359,6 @@ export default function App() {
               >
                 Milestones (10)
               </button>
-
-              <NewIssue
-                token={token}
-                // toggleCreateIssue={createIssueModal}
-                // setCreateIssue={setCreateIssueModal}
-              />
             </div>
           </div>
           {issues.length !== 0 || repos.length !== 0 ? (
@@ -371,6 +366,8 @@ export default function App() {
               issues={issues}
               repos={repos}
               toggleIssue={ids => toggleIssue(ids)}
+              token={token}
+              apiSearchIssuesMethod={query => apiSearchIssues(query)}
               displayWhat={displayWhat}
               page={page}
               perPage={perPage}

@@ -19,6 +19,9 @@ export default function IssueRow(props) {
             />
           </h5>
         </a>
+        <h5 className="text-primary my-3">
+          For Repo: {props.issue.url.split(".com/repos/")[1]}
+        </h5>
         <h6 className="text-muted">
           #{props.issue.number} opened{" "}
           {moment(props.issue.updated_at).fromNow()}

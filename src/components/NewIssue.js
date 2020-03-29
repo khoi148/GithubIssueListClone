@@ -3,6 +3,7 @@ import ReactModal from "react-modal";
 import { Tab, Tabs } from "react-bootstrap";
 
 export default function NewIssue(props) {
+  //props user, repo
   const [key, setKey] = useState("createissue");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -20,23 +21,25 @@ export default function NewIssue(props) {
     });
   };
 
-  const postIssue = async (user, repos, el) => {
-    el.preventDefault();
-    dataSubmit.labels = dataSubmit.labels
-      .split(",")
-      .filter(item => item !== "");
+  const postIssue = async e => {
+    e.preventDefault();
+    if (typeof dataSubmit.labels === "string")
+      dataSubmit.labels = dataSubmit.labels
+        .split(",")
+        .filter(item => item !== "");
     console.log(dataSubmit.labels);
     if (!dataSubmit.title || !dataSubmit.content) {
       alert("Dont leave title or content box blank!!");
       return false;
     }
+
     try {
       const issue = {
         title: dataSubmit.title,
         body: dataSubmit.content,
         labels: dataSubmit.labels
       };
-      const url = `https://api.github.com/repos/${user}/${repos}/issues`;
+      const url = `https://api.github.com/repos/${props.user}/${props.repo}/issues`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -45,10 +48,14 @@ export default function NewIssue(props) {
         },
         body: JSON.stringify(issue)
       });
+      console.log(props.token);
       if (response.ok) {
         alert("Your issue had been created successfully!");
         setDataSubmit({ title: "", content: "", labels: [] });
+        setIsOpen(false);
         // setCreateIssueModal(false);
+      } else {
+        alert("The issue was not posted. API Error on POST");
       }
     } catch (e) {
       console.log(e);
@@ -63,14 +70,14 @@ export default function NewIssue(props) {
         style={{ height: "30px" }}
         onClick={() => setIsOpen(true)}
       >
-        New
+        New Issue
       </button>
       <ReactModal
         ariaHideApp={false}
         isOpen={isOpen}
         style={{ overlay: { display: "flex", justifyContent: "center" } }}
       >
-        <form onSubmit={postIssue}>
+        <form onSubmit={event => postIssue(event)}>
           <Tabs
             id="controlled-tab-example"
             activeKey={key}
@@ -78,7 +85,9 @@ export default function NewIssue(props) {
           >
             <Tab eventKey="createissue" title="Create Issue">
               <div className="form-group">
-                <label>Title</label>
+                <label>
+                  Title of Issue for {props.user}/{props.repo}
+                </label>
                 <input
                   onChange={onInputChange}
                   value={dataSubmit.title}
@@ -290,6 +299,13 @@ export default function NewIssue(props) {
           </Tabs>
           <button type="submit" className="btn btn-primary">
             Submit
+          </button>
+          <button
+            className="btn btn-primary mx-2"
+            onClick={() => setIsOpen(false)}
+          >
+            {" "}
+            Close Prompt
           </button>
         </form>
       </ReactModal>

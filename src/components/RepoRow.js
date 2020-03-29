@@ -1,15 +1,25 @@
 import React from "react";
 import moment from "moment";
-
+import NewIssue from "./NewIssue.js";
 export default function RepoRow(props) {
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
-        <a href="#!" onClick={() => console.log("repo clicked")}>
+        <a
+          href="#!"
+          onClick={() => props.apiSearchIssuesMethod(props.repo.full_name)}
+        >
           <h5 className="text-primary" style={{ fontSize: "2rem" }}>
             {props.repo.full_name}
           </h5>
         </a>
+        <NewIssue
+          token={props.token}
+          user={props.repo.owner.login}
+          repo={props.repo.name}
+          // toggleCreateIssue={createIssueModal}
+          // setCreateIssue={setCreateIssueModal}
+        />
         <h5 className="my-3" style={{ fontSize: "14px" }}>
           {props.repo.description}
         </h5>
