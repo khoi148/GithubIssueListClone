@@ -11,7 +11,7 @@ const ReactDOM = require("react-dom");
 const ReactMarkdown = require("react-markdown");
 
 export default function ShowIssue(props) {
-
+  let [status, setStatus] = useState(null);
   const emoji = {
     ["+1"]:
       "https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png",
@@ -71,9 +71,14 @@ export default function ShowIssue(props) {
     }
   };
 
-  const lockIssue = async(id) => {
+  const lockIssue = async(id,state) => {
     try {
-      let issue = {state: 'closed'};
+      if (state === 'open') {
+        setStatus('closed')
+      } else if (state === 'closed') {
+        setStatus('open')
+      }
+      let issue = {state: status};
       const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}`;
       const response = await fetch(url, {
         method: "PATCH",
@@ -84,9 +89,9 @@ export default function ShowIssue(props) {
         body: JSON.stringify(issue)
       });
       if (response.ok) {
-        alert("Your issue had been closed successfully!");
+        alert("Your issue's status had been changed successfully!");
         props.toggleIssue(); //id issue
-      } else if (response.status === '401') {alert('You dont have authorize to close this issue!');}
+      } else if (response.status === '401') {alert('You dont have any authorize to change status this issue!');}
     } catch (e) {
       console.log(e)
     }
@@ -142,7 +147,7 @@ export default function ShowIssue(props) {
                 padding: "5px 5px 5px 5px",
                 color: "white"
               }}
-              onClick={()=> lockIssue(infoIssue.number)}
+              onClick={()=> lockIssue(infoIssue.number,infoIssue.state)}
             >
               <Image src={Open}/>{' '}Open
             </span>
@@ -150,10 +155,12 @@ export default function ShowIssue(props) {
             <span
               className="bg-danger"
               style={{
+                cursor: 'pointer',
                 borderRadius: "5px",
                 padding: "5px 5px 5px 5px",
                 color: "white"
               }}
+              onClick={()=> lockIssue(infoIssue.number,infoIssue.state)}
             >
             <Image src={Close}/>{' '}Closed
             </span>
