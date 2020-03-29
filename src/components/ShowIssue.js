@@ -91,7 +91,7 @@ export default function ShowIssue(props) {
       if (response.ok) {
         alert("Your issue's status had been changed successfully!");
         props.toggleIssue(); //id issue
-      } else if (response.status === '403') {alert('You dont have any authorize to change status this issue!');}
+      } else if (response.status === 403) {alert('You dont have any authorize to change status this issue!');}
   } catch (e) {
       console.log(e)
     }
@@ -117,7 +117,7 @@ export default function ShowIssue(props) {
       if (response.ok) {
         alert("Your issue had been changed successfully!");
         props.toggleIssue(); //id issue
-      } else if (response.status === '403') {alert('You dont have any authorize to change content this issue!');}
+      } else if (response.status === 403) {alert('You dont have any authorize to change content this issue!');}
   }
 } catch (e) {
       console.log(e)
