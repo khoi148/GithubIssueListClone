@@ -317,15 +317,6 @@ export default function App() {
 
         <div className="col-8 px-0">
           <div className="row pt-3">
-            {/*<div className="col-6">
-               <h5>
-                 <a href="#">github</a> /<a href="#">covid19-dashboard</a>
-               </h5>
-               <h6>
-                 generated from <a href="#">fastai/fastpages</a>
-               </h6>
-             </div> */}
-
             {/* these are tabs: Code Issues Pull-Reuquests ... */}
             <ProjectTabs />
           </div>
