@@ -9,11 +9,14 @@ let URL_SEARCH_REPOS_BEG = `https://api.github.com/search/repositories?q=`;
 let URL_SEARCH_ISSUES_BEG = `https://api.github.com/search/issues?q=`;
 let additional_qualifier = "";
 let url = "";
+let currentQuery = "";
+let perPage = 3;
 export default function App() {
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
+  const [page, setPage] = useState(1);
   const [displayWhat, setDisplayWhat] = useState({ repo: false, issue: false });
 
   function setTokenFunc() {
@@ -44,11 +47,12 @@ export default function App() {
     }
   }
   async function apiSearchRepos(query = "khoi148") {
+    currentQuery = query;
     //this url searches for repositories with [query] in their name, and sorts the results by interactions first in descending order
     const url1 =
       URL_SEARCH_REPOS_BEG +
       additional_qualifier +
-      `${query}+in:name+sort:interactions&per_page=15&page=1`;
+      `${query}+in:name+sort:interactions&per_page=${perPage}&page=${page}`;
     //this url searches for a specific repo of an org
     const url2 = URL_SEARCH_REPOS_BEG + additional_qualifier + `repo:${query}`;
 
@@ -61,21 +65,22 @@ export default function App() {
       }
     });
     const responseJson = await response.json();
-    setRepos(responseJson.items); //1 page of results in an array
+    setRepos(responseJson); //1 page of results in an array
     setDisplayWhat({ repo: true, issue: false });
     console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook") {
+    currentQuery = query;
     //this url searches for issues of a specific [repo], and sorts the results in an array, with most updated issues first
     const url1 =
       URL_SEARCH_ISSUES_BEG +
       additional_qualifier +
-      `repo:${query}+sort:updated+type:issue&per_page=15&page=1`;
+      `repo:${query}+sort:updated+type:issue&per_page=${perPage}&page=${page}`;
     //this url searches for issues with the query in their title
     const url2 =
       URL_SEARCH_ISSUES_BEG +
       additional_qualifier +
-      `${query}+sort:updated+in:title+type:issue&per_page=15&page=1`;
+      `${query}+sort:updated+in:title+type:issue&per_page=${perPage}&page=1`;
     url = query.includes("/") && query.split("/").length === 2 ? url1 : url2;
 
     const response = await fetch(url, {
@@ -85,9 +90,18 @@ export default function App() {
       }
     });
     const responseJson = await response.json();
-    setIssues(responseJson.items);
+    setIssues(responseJson);
     setDisplayWhat({ repo: false, issue: true });
     console.log("issues", responseJson);
+  }
+
+  async function pageSwitch(pageNum, displayWhat) {
+    setPage(pageNum);
+    if (displayWhat.repo === true) {
+      apiSearchRepos(currentQuery);
+    } else if (displayWhat.repo === true) {
+      apiSearchIssues(currentQuery);
+    }
   }
   useEffect(() => setTokenFunc(), []);
 
@@ -157,11 +171,11 @@ export default function App() {
               </button>
             </div>
           </div>
-
           <ListOfResults
             issues={issues}
             repos={repos}
             displayWhat={displayWhat}
+            pageSwitch={input => pageSwitch(input)}
           />
         </div>
       </div>
@@ -174,16 +188,16 @@ export default function App() {
         </button>
         <button onClick={() => apiSearchIssues()}>Click Me for Issues!</button>
         <div className="d-flex flex-column w-100 justify-content-center">
-          {repos.map(item => (
-            <a href="#">{item.name}</a>
-          ))}
+          {repos.items !== undefined &&
+            repos.items.map(item => <a href="#">{item.name}</a>)}
         </div>
         <div className="d-flex flex-column w-100 bg-light justify-content-center">
-          {issues.map(item => (
-            <a href="#">
-              `{item.title}___{item.updated_at.slice(0, 10)}`
-            </a>
-          ))}
+          {issues.items !== undefined &&
+            issues.items.map(item => (
+              <a href="#">
+                `{item.title}___{item.updated_at.slice(0, 10)}`
+              </a>
+            ))}
         </div>
       </div>
     </div>

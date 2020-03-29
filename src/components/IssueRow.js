@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import closeLogo from "../img/close.svg";
 import openLogo from "../img/open.svg";
 import moment from "moment";
@@ -14,6 +14,7 @@ export default function IssueRow(props) {
             {props.issue.title}
             <img
               className="ml-2"
+              alt="..."
               src={props.issue.state === "closed" ? closeLogo : openLogo}
             />
           </h5>

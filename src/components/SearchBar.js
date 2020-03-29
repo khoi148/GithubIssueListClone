@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 let defaultOption = "Repo";
 
 export default function SearchBar(props) {
