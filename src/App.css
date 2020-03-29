@@ -1,55 +1,56 @@
 .avatar {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 .comment-place {
-    border-top: 1px solid gray;
-    margin-top: 20px;
+  border-top: 1px solid gray;
+  margin-top: 20px;
 }
 
 .labels-btn {
-    outline: none;
-    border: none;
+  outline: none;
+  border: none;
 }
 
 .labels-btn:focus {
-    outline: none;
+  outline: none;
 }
 
 .title-issue {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
 }
 
 .title-userissue {
-    font-weight: bolder;
-    margin-left: 5px;
+  font-weight: bolder;
+  margin-left: 5px;
 }
 
 .comment-headers {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .icon-reactions {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .emoji-showing {
-    /* background-color: rgba(79, 85, 85, 0.418); */
-    padding: 5px 5px 10px 5px;
-    border-right: 1px solid gray;
+  /* background-color: rgba(79, 85, 85, 0.418); */
+  padding: 5px 5px 10px 5px;
+  border-right: 1px solid gray;
+  
 }
 
 .btn-suggest {
-    cursor: pointer;
-    font-size: 12px;
-    margin-left: 5px;
-    margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 5px;
+  margin-bottom: 10px;
 }

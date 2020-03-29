@@ -3,7 +3,7 @@ import React from "react";
 export default function ProjectTabs(props) {
   return (
     <div className="mt-2 pl-3" style={{zIndex: '0'}}>
-      <div className="btn-group btn-group-toggle" data-toggle="buttons">
+      {/* <div className="btn-group btn-group-toggle" data-toggle="buttons">
         <label className="btn btn-secondary">
           <input type="radio" name="options" id="option1" /> Code
         </label>
@@ -28,7 +28,7 @@ export default function ProjectTabs(props) {
         <label className="btn btn-secondary">
           <input type="radio" name="options" id="option7" /> Insights
         </label>
-      </div>
+      </div> */}
     </div>
   );
 }

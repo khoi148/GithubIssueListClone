@@ -20,6 +20,7 @@ export default function App() {
   let [showModal, setShowModal] = useState(false);
   let [commentExist, setCommentExist] = useState([]);
   let [issue, setIssue] = useState(null);
+
   let [createComment, setCreateComment] = useState("");
   let [reactionsThread, setReactionsThread] = useState([]);
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
@@ -36,16 +37,10 @@ export default function App() {
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
-  const [displayWhat, setDisplayWhat] = useState({ repo: true, issue: false });
-  // Set user/repos/ids to test modal // remove them after making function to get Repos witgit checkouth issue list to hook ↓
-  // install markdown : npm install --save react-markdown
-  // install moment: npm install --save moment react-moment
-  // install bootstrap: npm install react-bootstrap bootstrap
-  const user = "ldchinhcr";
-  // const repos = "test-issue";
-  const ids = "2";
-  // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
-
+  const [displayWhat, setDisplayWhat] = useState({
+    repo: true,
+    issue: false
+  });
   function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
@@ -312,88 +307,61 @@ export default function App() {
         editComment={editComment}
         deleteComment={deleteComment}
         token={token}
-        toggleIssue={toggleIssue}/>
+        toggleIssue={toggleIssue}
+  />
 
       <Navbar />
       <div className="row">
         <div className="col-2 px-0"></div>
 
         <div className="col-8 px-0">
-          <div className="row pt-3">
-            <div className="col-6">
-              <h5>
-                <a href="#">github</a> /<a href="#">covid19-dashboard</a>
-              </h5>
-              <h6>
-                generated from
-                <a href="#">fastai/fastpages</a>
-                </h6>
-              </div>
 
-              {/* these are tabs: Code Issues Pull-Reuquests ... */}
-              <ProjectTabs />
-            </div>
+            {/* these are tabs: Code Issues Pull-Reuquests ... */}
+            <ProjectTabs />
 
-            {/* issues contribute permission request */}
-            <div className="row mt-3">
-              <div className="col-10 text-center">
-                <p style={{ fontWeight: "bold" }}>
-                  Want to contribute to github/covid19-dashboard?
-              </p>
-                <p>
-                  If you have a bug or an idea, read the contributing guidelines
-                  before opening an issue.
-              </p>
-              </div>
+          {/* Filter Bar */}
+          <div className="row mt-3">
+            <SearchBar
+              apiSearchReposMethod={input => apiSearchRepos(input)}
+              apiSearchIssuesMethod={input => apiSearchIssues(input)}
+            />
+            <div className="col-4 d-flex px-0 justify-content-between">
+              <button
+                type="button"
+                className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mx-2"
+                style={{ height: "30px" }}
+              >
+                Labels (12)
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mr-2"
+                style={{ height: "30px" }}
+              >
+                Milestones (10)
+              </button>
             </div>
-
-            {/* Filter Bar */}
-            <div className="row mt-3">
-              <SearchBar
-                apiSearchReposMethod={input => apiSearchRepos(input)}
-                apiSearchIssuesMethod={input => apiSearchIssues(input)}
-              />
-              <div className="col-4 d-flex px-0 justify-content-between">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mx-2"
-                  style={{ height: "30px" }}
-                >
-                  Labels (12)
-              </button>
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mr-2"
-                  style={{ height: "30px" }}
-                >
-                  Milestones (10)
-              </button>
-                <button
-                  type="button"
-                  className="btn btn-success btn-sm flex-grow-1"
-                  style={{ height: "30px" }}
-                >
-                  New
-              </button>
-              </div>
-            </div>
-            {issues.length !== 0 || repos.length !== 0 ? (
-              <ListOfResults
-                issues={issues}
-                repos={repos}
-                displayWhat={displayWhat}
-                page={page}
-                perPage={perPage}
-                pageSwitch={(input, display) => pageSwitch(input, display)}
-                currentQuery={currentQuery}
-              />
-            ) : (
-                <span className="p-0 text-muted">
-                  Please search for issues or repositories above
-                </span>
-              )}
           </div>
+          {issues.length !== 0 || repos.length !== 0 ? (
+            <ListOfResults
+              issues={issues}
+              repos={repos}
+              toggleIssue={toggleIssue}
+              token={token}
+              apiSearchIssuesMethod={query => apiSearchIssues(query)}
+              displayWhat={displayWhat}
+              page={page}
+              perPage={perPage}
+              pageSwitch={(input, display) => pageSwitch(input, display)}
+              currentQuery={currentQuery}
+            />
+          ) : (
+            <span className="p-0 text-muted">
+              Please search for issues or repositories above
+            </span>
+          )}
         </div>
       </div>
+    </div>
   );
 }
