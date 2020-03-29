@@ -70,7 +70,7 @@ export default function ShowIssue(props) {
     }
   };
 
-  const lockIssue = async(id,content) => {
+  const statusIssue = async(id,content) => {
     try {
       let status = '';
       if (content === 'open') {
@@ -93,6 +93,33 @@ export default function ShowIssue(props) {
         props.toggleIssue(); //id issue
       } else if (response.status === '401') {alert('You dont have any authorize to change status this issue!');}
   } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const editIssue = async(id) => {
+    try {
+      let content = prompt('Your content need to change')
+      if (content === '') {
+        alert('Dont leave content blank');
+        return false;
+      } else {
+      let issue = {body: content};
+      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}`;
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": 'application/x-www-form-urlencoded',
+          Authorization: `token ${props.token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        alert("Your issue had been changed successfully!");
+        props.toggleIssue(); //id issue
+      } else if (response.status === '401') {alert('You dont have any authorize to change content this issue!');}
+  }
+} catch (e) {
       console.log(e)
     }
   }
@@ -141,26 +168,28 @@ export default function ShowIssue(props) {
           {infoIssue.state === "open" ? (
             <span
               className="bg-success"
+              title='Toggle to Close'
               style={{
                 cursor: 'pointer',
                 borderRadius: "5px",
                 padding: "5px 5px 5px 5px",
                 color: "white"
               }}
-              onClick={()=> lockIssue(infoIssue.number,infoIssue.state)}
+              onClick={()=> statusIssue(infoIssue.number,infoIssue.state)}
             >
               <Image src={Open}/>{' '}Open
             </span>
           ) : (
             <span
               className="bg-danger"
+              title='Toggle to Open'
               style={{
                 cursor: 'pointer',
                 borderRadius: "5px",
                 padding: "5px 5px 5px 5px",
                 color: "white"
               }}
-              onClick={()=> lockIssue(infoIssue.number,infoIssue.state)}
+              onClick={()=> statusIssue(infoIssue.number,infoIssue.state)}
             >
             <Image src={Close}/>{' '}Closed
             </span>
@@ -190,7 +219,7 @@ export default function ShowIssue(props) {
             <span className="title-userissue">{infoIssue.user.login}</span>{" "}
             commented <Moment fromNow>{infoIssue.created_at}</Moment>
           </div>
-
+          <div className='d-flex flex-row'>
           <div className="dropdown mr-1">
             <button
               className="btn btn-secondary dropdown-toggle"
@@ -300,6 +329,26 @@ export default function ShowIssue(props) {
                 Eyes
               </button>
             </div>
+          </div>
+          <div className="dropdown">
+          <button
+            className="btn btn-secondary dropdown-toggle"
+            type="button"
+            id="dropdownMenu2"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          ></button>
+          <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <button
+              onClick={() => editIssue(infoIssue.number)}
+              className="dropdown-item"
+              type="button"
+            >
+              Edit Contents
+            </button>
+          </div>
+        </div>
           </div>
         </div>
 
