@@ -36,7 +36,6 @@ export default function SearchBar(props) {
           {filterText}
         </button>
         <div className="dropdown-menu">
-          <div>Notifications</div>
           <a
             className="dropdown-item"
             id="Repo"
