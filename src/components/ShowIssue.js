@@ -70,6 +70,27 @@ export default function ShowIssue(props) {
     }
   };
 
+  const lockIssue = async(id) => {
+    try {
+      let issue = {'lock_reason': 'resolved'};
+      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}/lock`;
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": 'application/vnd.github.sailor-v-preview+json',
+          Authorization: `token ${props.token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        alert("Your issue had been closed successfully!");
+        props.toggleIssue(); //id issue
+      } else if (response.status === '401') {alert('You dont have authorize to close this issue!');}
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   if (infoIssue === null) {
     return;
   } else {
@@ -115,10 +136,12 @@ export default function ShowIssue(props) {
             <span
               className="bg-success"
               style={{
+                cursor: 'pointer',
                 borderRadius: "5px",
                 padding: "5px 5px 5px 5px",
                 color: "white"
               }}
+              onClick={()=> lockIssue(infoIssue.number)}
             >
               <Image src={Open}/>{' '}Open
             </span>

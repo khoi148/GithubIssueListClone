@@ -58,6 +58,7 @@ function App(props) {
           }
         });
         const responseJson = await response.json();
+        console.log(response)
         if (response.ok) {
           setIssue(responseJson);
           issueSide = responseJson;
