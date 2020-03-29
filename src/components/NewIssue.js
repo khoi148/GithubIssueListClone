@@ -39,7 +39,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'bug,'
+                  labels: (props.dataSubmit.labels += 'bug,')
                })
               }
               style={{
@@ -52,7 +52,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'documentation,'
+                  labels: (props.dataSubmit.labels += 'documentation,')
                })
               }
               style={{
@@ -65,7 +65,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'duplicate,'
+                  labels: (props.dataSubmit.labels += 'duplicate,')
                })
               }
               style={{
@@ -78,7 +78,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'enhancement,'
+                  labels: (props.dataSubmit.labels += 'enhancement,')
                })
               }
               style={{
@@ -91,7 +91,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'good first issue,'
+                  labels: (props.dataSubmit.labels += 'good first issue,')
                })
               }
               style={{
@@ -104,7 +104,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'help wanted,'
+                  labels: (props.dataSubmit.labels += 'help wanted,')
                })
               }
               style={{
@@ -117,7 +117,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'invalid,'
+                  labels: (props.dataSubmit.labels += 'invalid,')
                })
               }
               style={{
@@ -130,7 +130,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'question,'
+                  labels: (props.dataSubmit.labels += 'question,')
                })
               }
               style={{
@@ -143,7 +143,7 @@ export default function NewIssue(props) {
               onClick={()=> 
                 props.setDataSubmit({
                   ...props.dataSubmit,
-                  labels: 'wontfix,'
+                  labels: (props.dataSubmit.labels += 'wontfix,')
                })
               }
               style={{

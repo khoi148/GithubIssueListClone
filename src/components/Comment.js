@@ -43,7 +43,6 @@ export default function Comment(props) {
         } else {
           total[content] = 1;
         }
-        console.log("total", total);
         return total;
       }, {});
 
@@ -56,7 +55,6 @@ export default function Comment(props) {
           </span>
         );
       });
-      // console.log("html2", htmlforEmojiCom);
       setReactionsComments(htmlforEmojiCom);
     }
   };
