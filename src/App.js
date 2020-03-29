@@ -118,28 +118,28 @@ function App(props) {
     el.preventDefault();
     dataSubmit.labels = dataSubmit.labels.split(',').filter(item => item !== '');
     console.log(dataSubmit.labels)
-    // if(!dataSubmit.title || !dataSubmit.content) {
-    //   alert('Dont leave title or content box blank!!')
-    //   return false;
-    // }
-    // try {
-    //   const issue = {title: dataSubmit.title, body: dataSubmit.content, labels: dataSubmit.labels}
-    //   const url = `https://api.github.com/repos/${user}/${repos}/issues`;
-    //   const response = await fetch(url, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/x-www-form-urlencoded",
-    //       Authorization: `token ${token}`
-    //     },
-    //     body: JSON.stringify(issue)
-    //   });
-    //   if (response.ok) {
-    //     alert("Your issue had been created successfully!");
-    //     setDataSubmit({title: '', content: '', labels: []});
-    //   }
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    if(!dataSubmit.title || !dataSubmit.content) {
+      alert('Dont leave title or content box blank!!')
+      return false;
+    }
+    try {
+      const issue = {title: dataSubmit.title, body: dataSubmit.content, labels: dataSubmit.labels}
+      const url = `https://api.github.com/repos/${user}/${repos}/issues`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `token ${token}`
+        },
+        body: JSON.stringify(issue)
+      });
+      if (response.ok) {
+        alert("Your issue had been created successfully!");
+        setDataSubmit({title: '', content: '', labels: []});
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
 
 

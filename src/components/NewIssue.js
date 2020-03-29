@@ -177,11 +177,10 @@ export default function NewIssue(props) {
           </Tab>
           <Tab eventKey="preview" title="Preview">
             <h2>Title: {props.dataSubmit.title}</h2>
-            <h5>Labels: <span className="bg-dark text-light"
+            <h5>Labels: <span
             style={{
               borderRadius: "5px",
-              padding: "5px 5px 5px 5px",
-              color: "white"
+              padding: "5px 5px 5px 5px"
             }}>{props.dataSubmit.labels}</span></h5>
             <p>Content: {props.dataSubmit.content}</p>
           </Tab>
