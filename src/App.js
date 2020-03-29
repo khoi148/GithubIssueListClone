@@ -150,7 +150,6 @@ export default function App() {
   useEffect(() => setTokenFunc(), []);
 
   const toggleIssue = async (user, repos, ids) => {
-    // add due to id later , change: ids dynamically
     let issueSide = {};
     try {
       try {
@@ -162,7 +161,6 @@ export default function App() {
           }
         });
         const responseJson = await response.json();
-        console.log(response);
         if (response.ok) {
           setIssue(responseJson);
           issueSide = responseJson;
@@ -253,7 +251,10 @@ export default function App() {
     }
   };
 
-  const postComment = async (user, repos, comment, ids) => {
+  const postComment = async (comment) => {
+    let user = issue.repository_url.split('repos/')[1].split('/')[0]
+    let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+    let ids = issue.number;
     if (!comment) {
       alert("Don't leave the comment blank");
       return false;
@@ -272,14 +273,17 @@ export default function App() {
       if (response.ok) {
         alert("Your comment had been created successfully!");
         setCreateComment("");
-        toggleIssue(ids);
+        toggleIssue(user,repos,ids);
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const editComment = async (user, repos, idEdit, id) => {
+  const editComment = async (idEdit) => {
+    let user = issue.repository_url.split('repos/')[1].split('/')[0]
+    let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+    let ids = issue.number;
     let value = prompt("Type what you want to change");
     if (!value) {
       alert("Don't leave the comment blank");
@@ -298,7 +302,7 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your comment had been changed successfully!");
-        toggleIssue(id); //id
+        toggleIssue(user,repos,ids); //id
       } else if (response.status === 403) {
         alert("You dont have any authorize to edit this comment!");
       }
@@ -307,8 +311,11 @@ export default function App() {
     }
   };
 
-  const deleteComment = async (user, props, ids, idDelete) => {
+  const deleteComment = async (idDelete) => {
     try {
+      let user = issue.repository_url.split('repos/')[1].split('/')[0]
+      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+      let ids = issue.number;
       const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idDelete}`;
       const response = await fetch(url, {
         method: "DELETE",
@@ -319,7 +326,7 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
-        toggleIssue(ids); //id issue
+        toggleIssue(user,repos,ids); //id issue
       } else if (response.status === 403) {
         alert("You dont have any authorize to delete this comment!");
       }
@@ -329,7 +336,7 @@ export default function App() {
   };
 
   if (!token) {
-    return <h1>fuck</h1>;
+    return <h1></h1>;
   }
   return (
     <div className="App">
@@ -340,10 +347,8 @@ export default function App() {
         setCreateIssue={setCreateIssueModal}
         postIssue={postIssue}
         onInputChange={onInputChange}
-      /> //ưhen you make the api pót call to post the issue. Where are you posting it on github?? 
-      / Which repo on current repot has been chosen.
-      /Hmmm current Repo. Hmm. So, how does the user know what is the current repo use must choose the repo first. How? 
-      <ShowIssue
+      />
+        <ShowIssue
         toggleModal={showModal}
         setShowModal={setShowModal}
         issueSelected={issue}
@@ -425,7 +430,7 @@ export default function App() {
             <ListOfResults
               issues={issues}
               repos={repos}
-              toggleIssue={ids => toggleIssue(ids)}
+              toggleIssue={toggleIssue}
               displayWhat={displayWhat}
               page={page}
               perPage={perPage}

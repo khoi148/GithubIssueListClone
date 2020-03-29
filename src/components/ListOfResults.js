@@ -156,7 +156,7 @@ export default class ListOfResults extends Component {
           {this.props.issues.items !== undefined &&
             this.props.displayWhat.issue === true &&
             this.props.issues.items.map(item => {
-              return <IssueRow toggle={(id) => this.props.toggleIssue(id)} issue={item} />;
+              return <IssueRow toggleIssue={this.props.toggleIssue} issue={item}/>;
             })}
 
           {this.props.repos.items !== undefined &&

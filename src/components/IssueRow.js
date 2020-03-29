@@ -4,12 +4,13 @@ import openLogo from "../img/open.svg";
 import moment from "moment";
 
 export default function IssueRow(props) {
-
+  let user = props.issue.repository_url.split('repos/')[1].split('/')[0]
+  let repos = props.issue.repository_url.split('repos/')[1].split('/')[1]
 
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
-        <a href="#!" onClick={() => props.toggleIssue(props.issue.id)}>
+        <a onClick={() => props.toggleIssue(user, repos, props.issue.number)}>
           <h5 className="text-dark">
             {props.issue.title}
             <img

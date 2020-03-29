@@ -26,8 +26,9 @@ export default function Comment(props) {
   let [html1, setReactionsComments] = useState([]);
 
   const emojiComment = async idComment => {
-    // try {
-    const urlComRec = `https://api.github.com/repos/${props.user}/${props.repos}/issues/comments/${idComment}/reactions`; //fix here fix here.......
+    let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
+    let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
+    const urlComRec = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idComment}/reactions`; //fix here fix here.......
     const responseComRec = await fetch(urlComRec, {
       method: "GET",
       headers: {
@@ -59,14 +60,17 @@ export default function Comment(props) {
     }
   };
 
+
   useEffect(() => {
     emojiComment(props.item.id);
   }, []);
 
   const addReactComments = async (id, idAdd) => {
     try {
+      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
+      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
       let issue = { content: idAdd };
-      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/comments/${id}/reactions`;
+      const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${id}/reactions`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -77,7 +81,7 @@ export default function Comment(props) {
       });
       if (response.ok) {
         alert("Your reaction had been added successfully!");
-        props.toggleIssue(); //id id id id issue
+        props.toggleIssue(user,repos,props.issueSelected.number);
       }
     } catch (e) {
       console.log(e);

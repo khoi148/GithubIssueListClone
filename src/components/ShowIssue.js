@@ -51,8 +51,10 @@ export default function ShowIssue(props) {
 
   const addReactThread = async (idAdd, id) => {
     try {
+      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
+      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
       let issue = { content: idAdd };
-      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${props.ids}/reactions`;
+      const url = `https://api.github.com/repos/${user}/${repos}/issues/${id}/reactions`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -63,7 +65,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your reaction had been added successfully!");
-        props.toggleIssue(id); //id id issue
+        props.toggleIssue(user,repos,id); //id id issue
       }
     } catch (e) {
       console.log(e);
@@ -72,6 +74,8 @@ export default function ShowIssue(props) {
 
   const statusIssue = async (id, content) => {
     try {
+      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
+      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
       let status = "";
       if (content === "open") {
         status = "closed";
@@ -79,7 +83,7 @@ export default function ShowIssue(props) {
         status = "open";
       }
       let issue = { state: status };
-      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}`;
+      const url = `https://api.github.com/repos/${user}/${repos}/issues/${id}`;
       const response = await fetch(url, {
         method: "PATCH",
         headers: {
@@ -90,7 +94,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your issue's status had been changed successfully!");
-        props.toggleIssue(id);
+        props.toggleIssue(user,repos,id);
       } else if (response.status === 403) {
         alert("You dont have any authorize to change status this issue!");
       }
@@ -101,13 +105,15 @@ export default function ShowIssue(props) {
 
   const editIssue = async id => {
     try {
+      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
+      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
       let content = prompt("Your content need to change");
       if (content === "") {
         alert("Dont leave content blank");
         return false;
       } else {
         let issue = { body: content };
-        const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}`;
+        const url = `https://api.github.com/repos/${user}/${repos}/issues/${id}`;
         const response = await fetch(url, {
           method: "PATCH",
           headers: {
@@ -118,7 +124,7 @@ export default function ShowIssue(props) {
         });
         if (response.ok) {
           alert("Your issue had been changed successfully!");
-          props.toggleIssue(id); //id issue
+          props.toggleIssue(user,repos,id); //id issue
         } else if (response.status === 403) {
           alert("You dont have any authorize to change content this issue!");
         }
@@ -127,8 +133,8 @@ export default function ShowIssue(props) {
       console.log(e);
     }
   };
-
-  if (infoIssue === null || !props.issue) {
+  console.log(infoIssue)
+  if (!infoIssue) {
     return <span></span>;
   } else {
     return (
@@ -136,6 +142,7 @@ export default function ShowIssue(props) {
         ariaHideApp={false}
         isOpen={props.toggleModal}
         onRequestClose={() => props.setShowModal(false)}
+        style={{overlay: {display: 'flex', justifyContent: 'center'}, content: {width: '80%', height: '75%', position: 'relative', top: '15%'}}}
       >
         <h2 className="title-issue my-2">
           {infoIssue.title}{" "}
@@ -388,6 +395,7 @@ export default function ShowIssue(props) {
                   token={props.token}
                   deleteComment={props.deleteComment}
                   toggleIssue={props.toggleIssue}
+                  issueSelected={props.issueSelected}
                 />
               );
             })}
