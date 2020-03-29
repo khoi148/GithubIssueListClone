@@ -90,7 +90,7 @@ export default function App() {
     const responseJson = await response.json();
     setDisplayWhat({ repo: true, issue: false });
     setRepos(responseJson); //1 page of results in an array
-    // console.log("repo", responseJson);
+    console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook", pageSet = 1) {
     if (pageSet === 1) setPage(1);
@@ -116,6 +116,7 @@ export default function App() {
     const responseJson = await response.json();
     setDisplayWhat({ repo: false, issue: true });
     setIssues(responseJson);
+    console.log("issues", responseJson);
   }
 
   async function pageSwitch(pageNum, displayWhat) {
@@ -206,15 +207,15 @@ export default function App() {
     }
   };
 
-  const postComment = async (comment) => {
+  const postComment = async comment => {
     if (!comment) {
       alert("Don't leave the comment blank");
       return false;
     }
     try {
-      let user = issue.repository_url.split('repos/')[1].split('/')[0]
-      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
-      let ids = issue.number
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
+      let ids = issue.number;
       const issues = { body: comment };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
       const response = await fetch(url, {
@@ -228,16 +229,16 @@ export default function App() {
       if (response.ok) {
         alert("Your comment had been created successfully!");
         setCreateComment("");
-        toggleIssue(user,repos,ids);
+        toggleIssue(user, repos, ids);
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const editComment = async (idEdit) => {
-    let user = issue.repository_url.split('repos/')[1].split('/')[0]
-    let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+  const editComment = async idEdit => {
+    let user = issue.repository_url.split("repos/")[1].split("/")[0];
+    let repos = issue.repository_url.split("repos/")[1].split("/")[1];
     let ids = issue.number;
     let value = prompt("Type what you want to change");
     if (!value) {
@@ -257,7 +258,7 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your comment had been changed successfully!");
-        toggleIssue(user,repos,ids); //id
+        toggleIssue(user, repos, ids); //id
       } else if (response.status === 403) {
         alert("You dont have any authorize to edit this comment!");
       }
@@ -266,10 +267,10 @@ export default function App() {
     }
   };
 
-  const deleteComment = async (idDelete) => {
+  const deleteComment = async idDelete => {
     try {
-      let user = issue.repository_url.split('repos/')[1].split('/')[0]
-      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
       let ids = issue.number;
       const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idDelete}`;
       const response = await fetch(url, {
@@ -281,7 +282,7 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
-        toggleIssue(user,repos,ids); //id issue
+        toggleIssue(user, repos, ids); //id issue
       } else if (response.status === 403) {
         alert("You dont have any authorize to delete this comment!");
       }
@@ -308,7 +309,7 @@ export default function App() {
         deleteComment={deleteComment}
         token={token}
         toggleIssue={toggleIssue}
-  />
+      />
 
       <Navbar />
       <div className="row">
@@ -321,8 +322,7 @@ export default function App() {
                 <a href="#">github</a> /<a href="#">covid19-dashboard</a>
               </h5>
               <h6>
-                generated from
-                <a href="#">fastai/fastpages</a>
+                generated from <a href="#">fastai/fastpages</a>
               </h6>
             </div>
 

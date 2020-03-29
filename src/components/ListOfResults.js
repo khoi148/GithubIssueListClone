@@ -23,14 +23,10 @@ export default class ListOfResults extends Component {
     let array = [];
     let upperLimit = 5 * Math.ceil(props.page / 5);
     let base = upperLimit - 4;
-    console.log();
-    console.log("repo count", this.props.repos.total_count);
-    console.log();
     let totalCount =
       props.displayWhat.issue === true
         ? props.issues.total_count
         : props.repos.total_count;
-    console.log("totalCount", totalCount);
     let maxPage = Math.ceil(totalCount / this.props.perPage);
     if (upperLimit > maxPage) upperLimit = maxPage;
     if (base > maxPage || maxPage === undefined) upperLimit = base;
@@ -46,7 +42,7 @@ export default class ListOfResults extends Component {
   }
   componentWillUpdate(nextProps, nextState) {
     // console.log(this.state.page, this.state.arrayOfPages[4], nextProps.page);
-    console.log("nextProps", nextProps.issues, "currProps", this.props.issues);
+    // console.log("nextProps", nextProps.issues, "currProps", this.props.issues);
     if (
       nextProps.page > this.state.arrayOfPages[4] ||
       nextProps.page < this.state.arrayOfPages[0] ||
@@ -156,12 +152,7 @@ export default class ListOfResults extends Component {
           {this.props.issues.items !== undefined &&
             this.props.displayWhat.issue === true &&
             this.props.issues.items.map(item => {
-              return (
-                <IssueRow
-                  toggle={this.props.toggleIssue}
-                  issue={item}
-                />
-              );
+              return <IssueRow toggle={this.props.toggleIssue} issue={item} />;
             })}
 
           {this.props.repos.items !== undefined &&

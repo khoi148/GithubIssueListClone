@@ -50,8 +50,12 @@ export default function ShowIssue(props) {
 
   const addReactThread = async (idAdd, id) => {
     try {
-      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
-      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
+      let user = props.issueSelected.repository_url
+        .split("repos/")[1]
+        .split("/")[0];
+      let repos = props.issueSelected.repository_url
+        .split("repos/")[1]
+        .split("/")[1];
 
       let issue = { content: idAdd };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${id}/reactions`;
@@ -65,7 +69,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your reaction had been added successfully!");
-        props.toggleIssue(user,repos,id); //id id issue
+        props.toggleIssue(user, repos, id); //id id issue
       }
     } catch (e) {
       console.log(e);
@@ -73,9 +77,13 @@ export default function ShowIssue(props) {
   };
 
   const statusIssue = async (id, content) => {
-    try { 
-      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
-      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
+    try {
+      let user = props.issueSelected.repository_url
+        .split("repos/")[1]
+        .split("/")[0];
+      let repos = props.issueSelected.repository_url
+        .split("repos/")[1]
+        .split("/")[1];
       let status = "";
       if (content === "open") {
         status = "closed";
@@ -94,7 +102,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your issue's status had been changed successfully!");
-        props.toggleIssue(user,repos,id);//hmm id huh
+        props.toggleIssue(user, repos, id); //hmm id huh
       } else if (response.status === 403) {
         alert("You dont have any authorize to change status this issue!");
       }
@@ -105,8 +113,12 @@ export default function ShowIssue(props) {
 
   const editIssue = async id => {
     try {
-      let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
-      let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
+      let user = props.issueSelected.repository_url
+        .split("repos/")[1]
+        .split("/")[0];
+      let repos = props.issueSelected.repository_url
+        .split("repos/")[1]
+        .split("/")[1];
       let content = prompt("Your content need to change");
       if (content === "") {
         alert("Dont leave content blank");
@@ -120,12 +132,12 @@ export default function ShowIssue(props) {
             "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `token ${props.token}`
           },
-          body: JSON.stringify(issue) 
+          body: JSON.stringify(issue)
           // for this one I ended up using state variables to pass it in. So your prior syntax is fine it gonna show undefined
         });
         if (response.ok) {
           alert("Your issue had been changed successfully!");
-          props.toggleIssue(user,repos,id); //id issue
+          props.toggleIssue(user, repos, id); //id issue
         } else if (response.status === 403) {
           alert("You dont have any authorize to change content this issue!");
         }
@@ -134,7 +146,6 @@ export default function ShowIssue(props) {
       console.log(e);
     }
   };
-  console.log(infoIssue)
   if (!infoIssue) {
     return <span></span>;
   } else {
@@ -143,7 +154,15 @@ export default function ShowIssue(props) {
         ariaHideApp={false}
         isOpen={props.toggleModal}
         onRequestClose={() => props.setShowModal(false)}
-        style={{overlay: {display: 'flex', justifyContent: 'center'}, content: {width: '80%', height: '75%', position: 'relative', top: '15%'}}}
+        style={{
+          overlay: { display: "flex", justifyContent: "center" },
+          content: {
+            width: "80%",
+            height: "75%",
+            position: "relative",
+            top: "15%"
+          }
+        }}
       >
         <h2 className="title-issue my-2">
           {infoIssue.title}{" "}
@@ -165,7 +184,7 @@ export default function ShowIssue(props) {
                   style={{
                     borderRadius: "5px",
                     padding: "5px 5px 5px 5px",
-                    backgroundColor: `#${item.color}`, 
+                    backgroundColor: `#${item.color}`,
                     fontSize: "10px",
                     fontWeight: "normal"
                   }}
