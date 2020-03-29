@@ -11,6 +11,7 @@ const ReactDOM = require("react-dom");
 const ReactMarkdown = require("react-markdown");
 
 export default function ShowIssue(props) {
+
   const emoji = {
     ["+1"]:
       "https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png",
@@ -72,12 +73,12 @@ export default function ShowIssue(props) {
 
   const lockIssue = async(id) => {
     try {
-      let issue = {'lock_reason': 'resolved'};
-      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}/lock`;
+      let issue = {state: 'closed'};
+      const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}`;
       const response = await fetch(url, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
-          "Content-Type": 'application/vnd.github.sailor-v-preview+json',
+          "Content-Type": 'application/x-www-form-urlencoded',
           Authorization: `token ${props.token}`
         },
         body: JSON.stringify(issue)
