@@ -217,8 +217,10 @@ export default function App() {
     });
   };
 
-  const postIssue = async (user, repos, el) => {
+  const postIssue = async (el) => {
     el.preventDefault();
+    let user = issue.repository_url.split('repos/')[1].split('/')[0];
+    let repos = issue.repository_url.split('repos/')[1].split('/')[1];
     dataSubmit.labels = dataSubmit.labels
       .split(",")
       .filter(item => item !== "");
