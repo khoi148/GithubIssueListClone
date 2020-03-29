@@ -71,11 +71,11 @@ export default function ShowIssue(props) {
     }
   };
 
-  const lockIssue = async(id,state) => {
+  const lockIssue = async(id,content) => {
     try {
-      if (state === 'open') {
+      if (content === 'open') {
         setStatus('closed')
-      } else if (state === 'closed') {
+      } else if (content === 'closed') {
         setStatus('open')
       }
       let issue = {state: status};
