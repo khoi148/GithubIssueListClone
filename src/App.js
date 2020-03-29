@@ -191,7 +191,7 @@ function App(props) {
       if (response.ok) {
         alert("Your comment had been changed successfully!");
         toggleIssue(); //id
-      }
+      } else if (response.status === '401') {alert('You dont have any authorize to edit this comment!');}
     } catch (e) {
       console.log(e);
     }
@@ -210,7 +210,7 @@ function App(props) {
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
         toggleIssue(); //id issue
-      }
+      } else if (response.status === '401') {alert('You dont have any authorize to delete this comment!');}
     } catch (e) {
       console.log(e);
     }
