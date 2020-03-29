@@ -156,13 +156,26 @@ export default class ListOfResults extends Component {
           {this.props.issues.items !== undefined &&
             this.props.displayWhat.issue === true &&
             this.props.issues.items.map(item => {
-              return <IssueRow issue={item} />;
+              return (
+                <IssueRow
+                  toggle={this.props.toggleIssue}
+                  issue={item}
+                />
+              );
             })}
 
           {this.props.repos.items !== undefined &&
             this.props.displayWhat.repo === true &&
             this.props.repos.items.map(item => {
-              return <RepoRow repo={item} />;
+              return (
+                <RepoRow
+                  repo={item}
+                  token={this.props.token}
+                  apiSearchIssuesMethod={input =>
+                    this.props.apiSearchIssuesMethod(input)
+                  }
+                />
+              );
             })}
         </div>
 

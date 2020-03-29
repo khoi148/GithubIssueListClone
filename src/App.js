@@ -1,31 +1,42 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import ShowIssue from "./components/ShowIssue";
+import NewIssue from "./components/NewIssue";
 import ListOfResults from "./components/ListOfResults.js";
 import ProjectTabs from "./components/ProjectTabs.js";
 import Navbar from "./components/Navbar.js";
 import SearchBar from "./components/SearchBar.js";
 
+const clientId = process.env.REACT_APP_CLIENT_ID;
 let URL_SEARCH_REPOS_BEG = `https://api.github.com/search/repositories?q=`;
 let URL_SEARCH_ISSUES_BEG = `https://api.github.com/search/issues?q=`;
 let additional_qualifier = "";
 let url = "";
 let currentQuery = "";
 let perPage = 12;
-// let page = 1;
-const clientId = process.env.REACT_APP_CLIENT_ID;
-function App(props) {
+export default function App() {
+  // let [createIssueModal, setCreateIssueModal] = useState(false);
+
+  let [showModal, setShowModal] = useState(false);
+  let [commentExist, setCommentExist] = useState([]);
+  let [issue, setIssue] = useState(null);
+  let [createComment, setCreateComment] = useState("");
+  let [reactionsThread, setReactionsThread] = useState([]);
+  // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
+  // install markdown : npm install --save react-markdown
+  // install moment: npm install --save moment react-moment
+  // const user = "hungprok";
+  // const repos = "Tictactoe";
+  // const ids = '3';
+  // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
+
+  // let page = 1;
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
   const [displayWhat, setDisplayWhat] = useState({ repo: true, issue: false });
-  let [showModal, setShowModal] = useState(false);
-  let [commentExist, setCommentExist] = useState([]);
-  let [issue, setIssue] = useState(null);
-  let [createComment, setCreateComment] = useState("");
-  let [reactionsThread, setReactionsThread] = useState([]);
   // Set user/repos/ids to test modal // remove them after making function to get Repos witgit checkouth issue list to hook ↓
   // install markdown : npm install --save react-markdown
   // install moment: npm install --save moment react-moment
@@ -34,7 +45,8 @@ function App(props) {
   // const repos = "test-issue";
   const ids = "2";
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
-  let setTokenFunc = () => {
+
+  function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
     const accessToken =
@@ -51,13 +63,13 @@ function App(props) {
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
-      localStorage.setItem("token", accessToken.split("&")[0]); //store token in local storage
-      setToken(accessToken);
+      localStorage.setItem("token"); //store token in local storage
+      setToken(accessToken.split("&")[0]);
     }
 
     if (existingToken) {
-      console.log("existing token: ", existingToken.split("&")[0]);
-      setToken(existingToken);
+      console.log("existing token: ", existingToken);
+      setToken(existingToken.split("&")[0]);
     }
   }
   async function apiSearchRepos(query = "khoi148", pageSet = 1) {
@@ -83,7 +95,7 @@ function App(props) {
     const responseJson = await response.json();
     setDisplayWhat({ repo: true, issue: false });
     setRepos(responseJson); //1 page of results in an array
-    console.log("repo", responseJson);
+    // console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook", pageSet = 1) {
     if (pageSet === 1) setPage(1);
@@ -109,11 +121,10 @@ function App(props) {
     const responseJson = await response.json();
     setDisplayWhat({ repo: false, issue: true });
     setIssues(responseJson);
-    console.log("issues", responseJson);
   }
 
   async function pageSwitch(pageNum, displayWhat) {
-    console.log("on page", page, "going to page ", pageNum);
+    // console.log("on page", page, "going to page ", pageNum);
     let pageLocal = page;
     let pageOriginal = page;
     if (pageNum === "next") pageLocal += 1;
@@ -140,8 +151,7 @@ function App(props) {
   }
   useEffect(() => setTokenFunc(), []);
 
-  const toggleIssue = async () => {
-    // add due to id later , change: ids dynamically
+  const toggleIssue = async (user, repos, ids) => {
     let issueSide = {};
     try {
       try {
@@ -153,6 +163,7 @@ function App(props) {
           }
         });
         const responseJson = await response.json();
+        console.log(response);
         if (response.ok) {
           setIssue(responseJson);
           issueSide = responseJson;
@@ -200,13 +211,16 @@ function App(props) {
     }
   };
 
-  const postComment = async comment => {
+  const postComment = async (comment) => {
     if (!comment) {
       alert("Don't leave the comment blank");
       return false;
     }
     try {
-      const issue = { body: comment };
+      let user = issue.repository_url.split('repos/')[1].split('/')[0]
+      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+      let ids = issue.number
+      const issues = { body: comment };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
       const response = await fetch(url, {
         method: "POST",
@@ -214,19 +228,22 @@ function App(props) {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `token ${token}`
         },
-        body: JSON.stringify(issue)
+        body: JSON.stringify(issues)
       });
       if (response.ok) {
         alert("Your comment had been created successfully!");
         setCreateComment("");
-        toggleIssue(); //id
+        toggleIssue(user,repos,ids);
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const editComment = async idEdit => {
+  const editComment = async (idEdit) => {
+    let user = issue.repository_url.split('repos/')[1].split('/')[0]
+    let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+    let ids = issue.number;
     let value = prompt("Type what you want to change");
     if (!value) {
       alert("Don't leave the comment blank");
@@ -245,15 +262,20 @@ function App(props) {
       });
       if (response.ok) {
         alert("Your comment had been changed successfully!");
-        toggleIssue(); //id
+        toggleIssue(user,repos,ids); //id
+      } else if (response.status === 403) {
+        alert("You dont have any authorize to edit this comment!");
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const deleteComment = async idDelete => {
+  const deleteComment = async (idDelete) => {
     try {
+      let user = issue.repository_url.split('repos/')[1].split('/')[0]
+      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+      let ids = issue.number;
       const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idDelete}`;
       const response = await fetch(url, {
         method: "DELETE",
@@ -264,30 +286,21 @@ function App(props) {
       });
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
-        toggleIssue(); //id issue
+        toggleIssue(user,repos,ids); //id issue
+      } else if (response.status === 403) {
+        alert("You dont have any authorize to delete this comment!");
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  if (!token || !issue) {
-    // add this to issue list
-    return (
-      <div>
-        <div>On Loading...</div>
-        <button onClick={() => toggleIssue()}>Here is issue</button>
-      </div>
-    );
+  if (!token) {
+    return <h1></h1>;
   }
   return (
-    <div>
-      <button onClick={() => toggleIssue()}>Here is issue</button>
+    <div className="App">
       <ShowIssue
-        {...props}
-        ids={ids}
-        user={user}
-        repos={repos}
         toggleModal={showModal}
         setShowModal={setShowModal}
         issueSelected={issue}
@@ -299,21 +312,20 @@ function App(props) {
         editComment={editComment}
         deleteComment={deleteComment}
         token={token}
-        toggleIssue={toggleIssue}
-      />
-      <div className="App">
-        <Navbar />
-        <div className="row">
-          <div className="col-2 px-0"></div>
+        toggleIssue={toggleIssue}/>
 
-          <div className="col-8 px-0">
-            <div className="row pt-3">
-              <div className="col-6">
-                <h5>
-                  <a href="#">github</a> /<a href="#">covid19-dashboard</a>
-                </h5>
-                <h6>
-                  generated from
+      <Navbar />
+      <div className="row">
+        <div className="col-2 px-0"></div>
+
+        <div className="col-8 px-0">
+          <div className="row pt-3">
+            <div className="col-6">
+              <h5>
+                <a href="#">github</a> /<a href="#">covid19-dashboard</a>
+              </h5>
+              <h6>
+                generated from
                 <a href="#">fastai/fastpages</a>
                 </h6>
               </div>
@@ -383,7 +395,5 @@ function App(props) {
           </div>
         </div>
       </div>
-    </div>
   );
 }
-

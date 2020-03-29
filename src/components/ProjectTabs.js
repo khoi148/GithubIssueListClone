@@ -2,10 +2,10 @@ import React from "react";
 
 export default function ProjectTabs(props) {
   return (
-    <div className="mt-2 pl-3">
+    <div className="mt-2 pl-3" style={{zIndex: '0'}}>
       <div className="btn-group btn-group-toggle" data-toggle="buttons">
         <label className="btn btn-secondary">
-          <input type="radio" name="options" id="option1" defaultChecked /> Code
+          <input type="radio" name="options" id="option1" /> Code
         </label>
         <label className="btn btn-secondary">
           <input type="radio" name="options" id="option2" /> Issues
