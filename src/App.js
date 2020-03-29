@@ -15,17 +15,11 @@ let url = "";
 let currentQuery = "";
 let perPage = 12;
 export default function App() {
-  let [createIssueModal, setCreateIssueModal] = useState(false);
-  let [dataSubmit, setDataSubmit] = useState({
-    title: "",
-    content: "",
-    labels: []
-  });
+  // let [createIssueModal, setCreateIssueModal] = useState(false);
+
   let [showModal, setShowModal] = useState(false);
   let [commentExist, setCommentExist] = useState([]);
   let [issue, setIssue] = useState(null);
-
-  //So you CANNOT CHANGE ALl 'issues' cause I'm useing 'issues'. Don't use replace all unless you know fore sure 'issue' isb't used bhy ny code
 
   let [createComment, setCreateComment] = useState("");
   let [reactionsThread, setReactionsThread] = useState([]);
@@ -43,7 +37,10 @@ export default function App() {
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
-  const [displayWhat, setDisplayWhat] = useState({ repo: true, issue: false });
+  const [displayWhat, setDisplayWhat] = useState({
+    repo: true,
+    issue: false
+  });
   function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
@@ -61,13 +58,13 @@ export default function App() {
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
-      localStorage.setItem("token", accessToken.split("&")[0]); //store token in local storage
-      setToken(accessToken);
+      localStorage.setItem("token"); //store token in local storage
+      setToken(accessToken.split("&")[0]);
     }
 
     if (existingToken) {
-      // console.log("existing token: ", existingToken.split("&")[0]);
-      setToken(existingToken);
+      console.log("existing token: ", existingToken);
+      setToken(existingToken.split("&")[0]);
     }
   }
   async function apiSearchRepos(query = "khoi148", pageSet = 1) {
@@ -161,6 +158,7 @@ export default function App() {
           }
         });
         const responseJson = await response.json();
+        console.log(response);
         if (response.ok) {
           setIssue(responseJson);
           issueSide = responseJson;
@@ -208,61 +206,16 @@ export default function App() {
     }
   };
 
-  const onInputChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setDataSubmit({
-      ...dataSubmit,
-      [name]: value
-    });
-  };
-
-  const postIssue = async (el) => {
-    el.preventDefault();
-    let user = issue.repository_url.split('repos/')[1].split('/')[0];
-    let repos = issue.repository_url.split('repos/')[1].split('/')[1];
-    dataSubmit.labels = dataSubmit.labels
-      .split(",")
-      .filter(item => item !== "");
-    if (!dataSubmit.title || !dataSubmit.content) {
-      alert("Dont leave title or content box blank!!");
-      return false;
-    }
-    try {
-      const issue = {
-        title: dataSubmit.title,
-        body: dataSubmit.content,
-        labels: dataSubmit.labels
-      };
-      const url = `https://api.github.com/repos/${user}/${repos}/issues`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `token ${token}`
-        },
-        body: JSON.stringify(issue)
-      });
-      if (response.ok) {
-        alert("Your issue had been created successfully!");
-        setDataSubmit({ title: "", content: "", labels: [] });
-        setCreateIssueModal(false);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const postComment = async (comment) => {
-    let user = issue.repository_url.split('repos/')[1].split('/')[0]
-    let repos = issue.repository_url.split('repos/')[1].split('/')[1]
-    let ids = issue.number;
     if (!comment) {
       alert("Don't leave the comment blank");
       return false;
     }
     try {
-      const issue = { body: comment };
+      let user = issue.repository_url.split('repos/')[1].split('/')[0]
+      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+      let ids = issue.number
+      const issues = { body: comment };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
       const response = await fetch(url, {
         method: "POST",
@@ -270,7 +223,7 @@ export default function App() {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `token ${token}`
         },
-        body: JSON.stringify(issue)
+        body: JSON.stringify(issues)
       });
       if (response.ok) {
         alert("Your comment had been created successfully!");
@@ -342,15 +295,7 @@ export default function App() {
   }
   return (
     <div className="App">
-      <NewIssue
-        dataSubmit={dataSubmit}
-        setDataSubmit={setDataSubmit}
-        toggleCreateIssue={createIssueModal}
-        setCreateIssue={setCreateIssueModal}
-        postIssue={postIssue}
-        onInputChange={onInputChange}
-      />
-        <ShowIssue
+      <ShowIssue
         toggleModal={showModal}
         setShowModal={setShowModal}
         issueSelected={issue}
@@ -363,7 +308,8 @@ export default function App() {
         deleteComment={deleteComment}
         token={token}
         toggleIssue={toggleIssue}
-      />
+  />
+
       <Navbar />
       <div className="row">
         <div className="col-2 px-0"></div>
@@ -418,14 +364,6 @@ export default function App() {
               >
                 Milestones (10)
               </button>
-              <button
-                type="button"
-                className="btn btn-success btn-sm flex-grow-1"
-                style={{ height: "30px" }}
-                onClick={() => setCreateIssueModal(true)}
-              >
-                New
-              </button>
             </div>
           </div>
           {issues.length !== 0 || repos.length !== 0 ? (
@@ -433,6 +371,8 @@ export default function App() {
               issues={issues}
               repos={repos}
               toggleIssue={toggleIssue}
+              token={token}
+              apiSearchIssuesMethod={query => apiSearchIssues(query)}
               displayWhat={displayWhat}
               page={page}
               perPage={perPage}

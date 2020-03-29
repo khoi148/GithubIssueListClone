@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Open from "../assets/icon/open.svg";
 import Close from "../assets/icon/close.svg";
-import "bootstrap/dist/css/bootstrap.min.css";
 import ReactModal from "react-modal";
 import { Image, Form, Button, Tab, Tabs } from "react-bootstrap";
 import Moment from "react-moment";
@@ -53,6 +52,7 @@ export default function ShowIssue(props) {
     try {
       let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
       let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
+
       let issue = { content: idAdd };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${id}/reactions`;
       const response = await fetch(url, {
@@ -73,7 +73,7 @@ export default function ShowIssue(props) {
   };
 
   const statusIssue = async (id, content) => {
-    try {
+    try { 
       let user = props.issueSelected.repository_url.split('repos/')[1].split('/')[0]
       let repos = props.issueSelected.repository_url.split('repos/')[1].split('/')[1]
       let status = "";
@@ -94,7 +94,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your issue's status had been changed successfully!");
-        props.toggleIssue(user,repos,id);
+        props.toggleIssue(user,repos,id);//hmm id huh
       } else if (response.status === 403) {
         alert("You dont have any authorize to change status this issue!");
       }
@@ -120,7 +120,8 @@ export default function ShowIssue(props) {
             "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `token ${props.token}`
           },
-          body: JSON.stringify(issue)
+          body: JSON.stringify(issue) 
+          // for this one I ended up using state variables to pass it in. So your prior syntax is fine it gonna show undefined
         });
         if (response.ok) {
           alert("Your issue had been changed successfully!");
@@ -164,7 +165,7 @@ export default function ShowIssue(props) {
                   style={{
                     borderRadius: "5px",
                     padding: "5px 5px 5px 5px",
-                    backgroundColor: `#${item.color}`,
+                    backgroundColor: `#${item.color}`, 
                     fontSize: "10px",
                     fontWeight: "normal"
                   }}
