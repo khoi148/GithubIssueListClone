@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import ReactModal from "react-modal";
 import { Image, Form, Button } from "react-bootstrap";
 import Moment from "react-moment";
