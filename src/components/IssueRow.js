@@ -7,7 +7,7 @@ export default function IssueRow(props) {
   //props. issue
 
   return (
-    <div className="row p-3 w-100 m-0">
+    <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
         <a href="#!" onClick={() => console.log("issue clicked")}>
           <h5 className="text-dark">

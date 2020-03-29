@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import IssueRow from "./IssueRow.js";
+import RepoRow from "./RepoRow.js";
 import Pagination from "react-bootstrap/Pagination";
 
 export default class ListOfResults extends Component {
@@ -22,15 +23,18 @@ export default class ListOfResults extends Component {
     let array = [];
     let upperLimit = 5 * Math.ceil(props.page / 5);
     let base = upperLimit - 4;
-    // console.log("issues count", props.issues);
-    if (upperLimit > props.issues.total_count)
-      upperLimit = props.issues.total_count;
+    console.log();
+    console.log("repo count", this.props.repos.total_count);
+    console.log();
+    let totalCount =
+      props.displayWhat.issue === true
+        ? props.issues.total_count
+        : props.repos.total_count;
+    console.log("totalCount", totalCount);
+    let maxPage = Math.ceil(totalCount / this.props.perPage);
+    if (upperLimit > maxPage) upperLimit = maxPage;
+    if (base > maxPage || maxPage === undefined) upperLimit = base;
 
-    if (
-      base > props.issues.total_count ||
-      props.issues.total_count === undefined
-    )
-      upperLimit = base;
     for (let x = base; x <= upperLimit; x++) {
       array.push(x);
     }
@@ -46,7 +50,8 @@ export default class ListOfResults extends Component {
     if (
       nextProps.page > this.state.arrayOfPages[4] ||
       nextProps.page < this.state.arrayOfPages[0] ||
-      nextProps.issues !== this.props.issues
+      nextProps.issues !== this.props.issues ||
+      nextProps.repos !== this.props.repos
     ) {
       this.setState({
         arrayOfPages: this.setButtons(nextProps)
@@ -55,28 +60,30 @@ export default class ListOfResults extends Component {
   }
 
   render() {
+    let totalCountRender =
+      this.props.displayWhat.repo === true
+        ? this.props.repos.total_count
+        : this.props.issues.total_count;
     return (
-      <div>
-        <div
-          className="row mt-2"
-          style={{ border: "1px solid grey", borderRadius: "10px" }}
-        >
+      <div className="mt-4">
+        <div className="row">
           <div
             className="d-flex p-3"
             style={{
               backgroundColor: "lightgray",
               width: "100%",
-              borderTopLeftRadius: "10px",
-              borderTopRightRadius: "10px"
+              borderRadius: "10px"
             }}
           >
             <div className="col-3 d-flex flex-column">
               <span className="text-secondary">
-                Total results: {this.props.issues.total_count}
+                total {this.props.displayWhat.issue === true ? "issue" : "repo"}{" "}
+                results: {totalCountRender}
               </span>
-              {this.props.issues.items !== undefined && (
+              {(this.props.issues.items !== undefined ||
+                this.props.repos.items !== undefined) && (
                 <span className="text-secondary">
-                  On Page: {this.props.page}
+                  on page: {this.props.page}
                 </span>
               )}
             </div>
@@ -147,12 +154,20 @@ export default class ListOfResults extends Component {
           </div>
 
           {this.props.issues.items !== undefined &&
+            this.props.displayWhat.issue === true &&
             this.props.issues.items.map(item => {
               return <IssueRow issue={item} />;
             })}
+
+          {this.props.repos.items !== undefined &&
+            this.props.displayWhat.repo === true &&
+            this.props.repos.items.map(item => {
+              return <RepoRow repo={item} />;
+            })}
         </div>
 
-        {this.props.issues.items !== undefined && (
+        {(this.props.issues.items !== undefined ||
+          this.props.repos.items !== undefined) && (
           <div className="mt-4">
             <Pagination>
               <Pagination.Item
@@ -186,15 +201,13 @@ export default class ListOfResults extends Component {
             <Pagination.Item>{13}</Pagination.Item>
             <Pagination.Ellipsis />
             <Pagination.Item>{20}</Pagination.Item>}  */}
-              {this.props.page + 15 <=
-                Math.floor(
-                  this.props.issues.total_count / this.props.perPage
-                ) && (
+              {this.props.page + 5 <=
+                Math.ceil(totalCountRender / this.props.perPage) && (
                 <Pagination.Item
-                  id={this.props.page + 15}
+                  id={this.props.page + 5}
                   onClick={event => this.paginationClick(event)}
                 >
-                  {this.props.page + 15}
+                  {this.props.page + 5}
                 </Pagination.Item>
               )}
               <Pagination.Item

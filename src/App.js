@@ -18,7 +18,7 @@ export default function App() {
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
-  const [displayWhat, setDisplayWhat] = useState({ repo: false, issue: true });
+  const [displayWhat, setDisplayWhat] = useState({ repo: true, issue: false });
   function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
@@ -37,12 +37,12 @@ export default function App() {
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
-      localStorage.setItem("token", accessToken); //store token in local storage
+      localStorage.setItem("token", accessToken.split("&")[0]); //store token in local storage
       setToken(accessToken);
     }
 
     if (existingToken) {
-      console.log("existing token: ", existingToken);
+      console.log("existing token: ", existingToken.split("&")[0]);
       setToken(existingToken);
     }
   }
@@ -67,8 +67,8 @@ export default function App() {
       }
     });
     const responseJson = await response.json();
-    setRepos(responseJson); //1 page of results in an array
     setDisplayWhat({ repo: true, issue: false });
+    setRepos(responseJson); //1 page of results in an array
     console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook", pageSet = 1) {
@@ -93,14 +93,15 @@ export default function App() {
       }
     });
     const responseJson = await response.json();
-    setIssues(responseJson);
     setDisplayWhat({ repo: false, issue: true });
+    setIssues(responseJson);
     console.log("issues", responseJson);
   }
 
   async function pageSwitch(pageNum, displayWhat) {
     console.log("on page", page, "going to page ", pageNum);
     let pageLocal = page;
+    let pageOriginal = page;
     if (pageNum === "next") pageLocal += 1;
     else if (pageNum === "prev") pageLocal -= 1;
     else if (pageNum === "next-5") pageLocal += 5;
@@ -109,15 +110,18 @@ export default function App() {
 
     if (pageLocal < 1) pageLocal = 1;
     // console.log("value", issues.total_count);
-    if (pageLocal > Math.max(Math.floor(issues.total_count / perPage), 1))
-      pageLocal = Math.max(Math.floor(issues.total_count / perPage), 1);
+    let totalCount =
+      displayWhat.repo === true ? repos.total_count : issues.total_count;
+    if (pageLocal > Math.max(Math.ceil(totalCount / perPage), 1))
+      pageLocal = Math.max(Math.ceil(totalCount / perPage), 1);
 
-    setPage(pageLocal);
-    // console.log("dwhat", displayWhat);
-    if (displayWhat.repo !== undefined && displayWhat.repo === true) {
-      apiSearchRepos(currentQuery, pageLocal);
-    } else if (displayWhat.repo !== undefined && displayWhat.issue === true) {
-      apiSearchIssues(currentQuery, pageLocal);
+    if (pageOriginal !== pageLocal) {
+      setPage(pageLocal);
+      if (displayWhat.repo !== undefined && displayWhat.repo === true) {
+        apiSearchRepos(currentQuery, pageLocal);
+      } else if (displayWhat.repo !== undefined && displayWhat.issue === true) {
+        apiSearchIssues(currentQuery, pageLocal);
+      }
     }
   }
   useEffect(() => setTokenFunc(), []);
@@ -126,9 +130,9 @@ export default function App() {
     <div className="App">
       <Navbar />
       <div className="row">
-        <div className="col-2"></div>
+        <div className="col-2 px-0"></div>
 
-        <div className="col-8">
+        <div className="col-8 px-0">
           <div className="row pt-3">
             <div className="col-6">
               <h5>
@@ -163,7 +167,6 @@ export default function App() {
               apiSearchReposMethod={input => apiSearchRepos(input)}
               apiSearchIssuesMethod={input => apiSearchIssues(input)}
             />
-
             <div className="col-4 d-flex px-0 justify-content-between">
               <button
                 type="button"
@@ -188,7 +191,7 @@ export default function App() {
               </button>
             </div>
           </div>
-          {issues.length !== 0 && (
+          {issues.length !== 0 || repos.length !== 0 ? (
             <ListOfResults
               issues={issues}
               repos={repos}
@@ -198,28 +201,11 @@ export default function App() {
               pageSwitch={(input, display) => pageSwitch(input, display)}
               currentQuery={currentQuery}
             />
+          ) : (
+            <span className="p-0 text-muted">
+              Please search for issues or repositories above
+            </span>
           )}
-        </div>
-      </div>
-
-      <div className="container bg-success mt-5">
-        <h1>Header for Github API</h1>
-        <button onClick={() => apiSearchRepos()}>Click Me for Repos!</button>
-        <button onClick={() => apiSearchRepos("khoi148/GithubIssueListClone")}>
-          Click Me for Owner/Repos!
-        </button>
-        <button onClick={() => apiSearchIssues()}>Click Me for Issues!</button>
-        <div className="d-flex flex-column w-100 justify-content-center">
-          {repos.items !== undefined &&
-            repos.items.map(item => <a href="#">{item.name}</a>)}
-        </div>
-        <div className="d-flex flex-column w-100 bg-light justify-content-center">
-          {issues.items !== undefined &&
-            issues.items.map(item => (
-              <a href="#">
-                `{item.title}___{item.updated_at.slice(0, 10)}`
-              </a>
-            ))}
         </div>
       </div>
     </div>

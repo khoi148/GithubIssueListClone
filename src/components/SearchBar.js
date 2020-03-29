@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-let defaultOption = "Issue";
+let defaultOption = "Repo";
 
 export default function SearchBar(props) {
   const [filterText, setFilterText] = useState("Filter");
   function filterSelect(event) {
     defaultOption = event.target.id;
-    // console.log(defaultOption);
+    console.log(defaultOption);
     setFilterText(defaultOption);
   }
 
@@ -22,7 +22,7 @@ export default function SearchBar(props) {
   }
 
   return (
-    <div className="col-8 pl-0 btn-group p-0" style={{ height: "30px" }}>
+    <div className="col-8 btn-group pl-3" style={{ height: "30px" }}>
       <div className="btn-group">
         <button
           className="btn btn-outline-secondary btn-sm dropdown-toggle"
