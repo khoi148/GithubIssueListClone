@@ -136,6 +136,7 @@ function App(props) {
       if (response.ok) {
         alert("Your issue had been created successfully!");
         setDataSubmit({title: '', content: '', labels: []});
+        setCreateIssueModal(false);
       }
     } catch (e) {
       console.log(e);
