@@ -10,7 +10,7 @@ function App(props) {
   let [issue, setIssue] = useState(null);
   let [createComment, setCreateComment] = useState("");
   let [reactionsThread, setReactionsThread] = useState([]);
-  // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
+  // Set user/repos/ids to test modal // remove them after making function to get Repos witgit checkouth issue list to hook ↓
   // install markdown : npm install --save react-markdown
   // install moment: npm install --save moment react-moment
   // install bootstrap: npm install react-bootstrap bootstrap
