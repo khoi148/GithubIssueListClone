@@ -16,9 +16,9 @@ function App(props) {
   // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
   // install markdown : npm install --save react-markdown
   // install moment: npm install --save moment react-moment
-  const user = "ldchinhcr";
-  const repos = "test-issue";
-  const ids = '2';
+  const user = "hungprok";
+  const repos = "Tictactoe";
+  const ids = '3';
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
   useEffect(() => {
     const existingToken = localStorage.getItem("token");
@@ -32,14 +32,14 @@ function App(props) {
         `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
       );
     }
-
+  
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
       localStorage.setItem("token", accessToken);
       setToken(accessToken);
     }
-
+  
     if (existingToken) {
       setToken(existingToken);
     }
@@ -58,6 +58,7 @@ function App(props) {
           }
         });
         const responseJson = await response.json();
+        console.log(response)
         if (response.ok) {
           setIssue(responseJson);
           issueSide = responseJson;
@@ -191,7 +192,7 @@ function App(props) {
       if (response.ok) {
         alert("Your comment had been changed successfully!");
         toggleIssue(); //id
-      } else if (response.status === '401') {alert('You dont have any authorize to edit this comment!');}
+      } else if (response.status === '403') {alert('You dont have any authorize to edit this comment!');}
     } catch (e) {
       console.log(e);
     }
@@ -210,7 +211,7 @@ function App(props) {
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
         toggleIssue(); //id issue
-      } else if (response.status === '401') {alert('You dont have any authorize to delete this comment!');}
+      } else if (response.status === '403') {alert('You dont have any authorize to delete this comment!');}
     } catch (e) {
       console.log(e);
     }
