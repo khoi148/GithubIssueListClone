@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-let defaultOption = "Repo";
+let defaultOption = "Issue";
 
 export default function SearchBar(props) {
   const [filterText, setFilterText] = useState("Filter");

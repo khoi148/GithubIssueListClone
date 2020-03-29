@@ -10,15 +10,15 @@ let URL_SEARCH_ISSUES_BEG = `https://api.github.com/search/issues?q=`;
 let additional_qualifier = "";
 let url = "";
 let currentQuery = "";
-let perPage = 3;
+let perPage = 12;
+// let page = 1;
 export default function App() {
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
-  const [displayWhat, setDisplayWhat] = useState({ repo: false, issue: false });
-
+  const [displayWhat, setDisplayWhat] = useState({ repo: false, issue: true });
   function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
@@ -46,13 +46,15 @@ export default function App() {
       setToken(existingToken);
     }
   }
-  async function apiSearchRepos(query = "khoi148") {
+  async function apiSearchRepos(query = "khoi148", pageSet = 1) {
+    if (pageSet === 1) setPage(1);
+
     currentQuery = query;
     //this url searches for repositories with [query] in their name, and sorts the results by interactions first in descending order
     const url1 =
       URL_SEARCH_REPOS_BEG +
       additional_qualifier +
-      `${query}+in:name+sort:interactions&per_page=${perPage}&page=${page}`;
+      `${query}+in:name+sort:interactions&per_page=${perPage}&page=${pageSet}`;
     //this url searches for a specific repo of an org
     const url2 = URL_SEARCH_REPOS_BEG + additional_qualifier + `repo:${query}`;
 
@@ -69,18 +71,19 @@ export default function App() {
     setDisplayWhat({ repo: true, issue: false });
     console.log("repo", responseJson);
   }
-  async function apiSearchIssues(query = "facebook") {
+  async function apiSearchIssues(query = "facebook", pageSet = 1) {
+    if (pageSet === 1) setPage(1);
     currentQuery = query;
     //this url searches for issues of a specific [repo], and sorts the results in an array, with most updated issues first
     const url1 =
       URL_SEARCH_ISSUES_BEG +
       additional_qualifier +
-      `repo:${query}+sort:updated+type:issue&per_page=${perPage}&page=${page}`;
+      `repo:${query}+sort:updated+type:issue&per_page=${perPage}&page=${pageSet}`;
     //this url searches for issues with the query in their title
     const url2 =
       URL_SEARCH_ISSUES_BEG +
       additional_qualifier +
-      `${query}+sort:updated+in:title+type:issue&per_page=${perPage}&page=1`;
+      `${query}+sort:updated+in:title+type:issue&per_page=${perPage}&page=${pageSet}`;
     url = query.includes("/") && query.split("/").length === 2 ? url1 : url2;
 
     const response = await fetch(url, {
@@ -96,11 +99,25 @@ export default function App() {
   }
 
   async function pageSwitch(pageNum, displayWhat) {
-    setPage(pageNum);
-    if (displayWhat.repo === true) {
-      apiSearchRepos(currentQuery);
-    } else if (displayWhat.repo === true) {
-      apiSearchIssues(currentQuery);
+    console.log("on page", page, "going to page ", pageNum);
+    let pageLocal = page;
+    if (pageNum === "next") pageLocal += 1;
+    else if (pageNum === "prev") pageLocal -= 1;
+    else if (pageNum === "next-5") pageLocal += 5;
+    else if (pageNum === "prev-5") pageLocal -= 5;
+    else pageLocal = parseInt(pageNum);
+
+    if (pageLocal < 1) pageLocal = 1;
+    // console.log("value", issues.total_count);
+    if (pageLocal > Math.max(Math.floor(issues.total_count / perPage), 1))
+      pageLocal = Math.max(Math.floor(issues.total_count / perPage), 1);
+
+    setPage(pageLocal);
+    // console.log("dwhat", displayWhat);
+    if (displayWhat.repo !== undefined && displayWhat.repo === true) {
+      apiSearchRepos(currentQuery, pageLocal);
+    } else if (displayWhat.repo !== undefined && displayWhat.issue === true) {
+      apiSearchIssues(currentQuery, pageLocal);
     }
   }
   useEffect(() => setTokenFunc(), []);
@@ -171,12 +188,17 @@ export default function App() {
               </button>
             </div>
           </div>
-          <ListOfResults
-            issues={issues}
-            repos={repos}
-            displayWhat={displayWhat}
-            pageSwitch={input => pageSwitch(input)}
-          />
+          {issues.length !== 0 && (
+            <ListOfResults
+              issues={issues}
+              repos={repos}
+              displayWhat={displayWhat}
+              page={page}
+              perPage={perPage}
+              pageSwitch={(input, display) => pageSwitch(input, display)}
+              currentQuery={currentQuery}
+            />
+          )}
         </div>
       </div>
 
