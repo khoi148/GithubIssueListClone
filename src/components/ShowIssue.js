@@ -11,7 +11,6 @@ const ReactDOM = require("react-dom");
 const ReactMarkdown = require("react-markdown");
 
 export default function ShowIssue(props) {
-  let [status, setStatus] = useState(null);
   const emoji = {
     ["+1"]:
       "https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png",
@@ -71,12 +70,13 @@ export default function ShowIssue(props) {
     }
   };
 
-  const lockIssue = async(id,state) => {
+  const lockIssue = async(id,content) => {
     try {
-      if (state === 'open') {
-        setStatus('closed')
-      } else if (state === 'closed') {
-        setStatus('open')
+      let status = '';
+      if (content === 'open') {
+        status = 'closed';
+      } else if (content === 'closed') {
+        status = 'open';
       }
       let issue = {state: status};
       const url = `https://api.github.com/repos/${props.user}/${props.repos}/issues/${id}`;
@@ -92,7 +92,7 @@ export default function ShowIssue(props) {
         alert("Your issue's status had been changed successfully!");
         props.toggleIssue(); //id issue
       } else if (response.status === '401') {alert('You dont have any authorize to change status this issue!');}
-    } catch (e) {
+  } catch (e) {
       console.log(e)
     }
   }
