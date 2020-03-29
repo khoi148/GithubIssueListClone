@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import ShowIssue from "./components/ShowIssue";
-import NewIssue from './components/NewIssue'
+import NewIssue from "./components/NewIssue";
 import ListOfResults from "./components/ListOfResults.js";
 import ProjectTabs from "./components/ProjectTabs.js";
 import Navbar from "./components/Navbar.js";
@@ -16,11 +16,15 @@ let currentQuery = "";
 let perPage = 12;
 export default function App() {
   let [createIssueModal, setCreateIssueModal] = useState(false);
-  let [dataSubmit, setDataSubmit] = useState({title: '', content: '', labels: []});
+  let [dataSubmit, setDataSubmit] = useState({
+    title: "",
+    content: "",
+    labels: []
+  });
   let [showModal, setShowModal] = useState(false);
   let [commentExist, setCommentExist] = useState([]);
-  let [issueInModal, setIssueInModal] = useState(null);
-  
+  let [issue, setIssue] = useState(null);
+
   //So you CANNOT CHANGE ALl 'issues' cause I'm useing 'issues'. Don't use replace all unless you know fore sure 'issue' isb't used bhy ny code
 
   let [createComment, setCreateComment] = useState("");
@@ -33,9 +37,7 @@ export default function App() {
   // const ids = '3';
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
 
-
-
-// let page = 1;
+  // let page = 1;
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
   const [repos, setRepos] = useState([]);
@@ -55,14 +57,14 @@ export default function App() {
         `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
       );
     }
-  
+
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
       localStorage.setItem("token", accessToken.split("&")[0]); //store token in local storage
       setToken(accessToken);
     }
-  
+
     if (existingToken) {
       // console.log("existing token: ", existingToken.split("&")[0]);
       setToken(existingToken);
@@ -91,7 +93,7 @@ export default function App() {
     const responseJson = await response.json();
     setDisplayWhat({ repo: true, issue: false });
     setRepos(responseJson); //1 page of results in an array
-    console.log("repo", responseJson);
+    // console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook", pageSet = 1) {
     if (pageSet === 1) setPage(1);
@@ -117,11 +119,10 @@ export default function App() {
     const responseJson = await response.json();
     setDisplayWhat({ repo: false, issue: true });
     setIssues(responseJson);
-    console.log("issues", responseJson);
   }
 
   async function pageSwitch(pageNum, displayWhat) {
-    console.log("on page", page, "going to page ", pageNum);
+    // console.log("on page", page, "going to page ", pageNum);
     let pageLocal = page;
     let pageOriginal = page;
     if (pageNum === "next") pageLocal += 1;
@@ -148,7 +149,7 @@ export default function App() {
   }
   useEffect(() => setTokenFunc(), []);
 
-  const toggleIssue = async(user ='', repos, ids) => {
+  const toggleIssue = async (user, repos, ids) => {
     // add due to id later , change: ids dynamically
     let issueSide = {};
     try {
@@ -161,9 +162,9 @@ export default function App() {
           }
         });
         const responseJson = await response.json();
-        console.log(response)
+        console.log(response);
         if (response.ok) {
-          setIssueInModal(responseJson);
+          setIssue(responseJson);
           issueSide = responseJson;
         }
       } catch (e) {
@@ -209,25 +210,30 @@ export default function App() {
     }
   };
 
-  const onInputChange = (e) => {
+  const onInputChange = e => {
     const name = e.target.name;
     const value = e.target.value;
     setDataSubmit({
       ...dataSubmit,
-      [name]: value,
-   })
-  }
+      [name]: value
+    });
+  };
 
-  const postIssue = async(user, repos, el) => {
+  const postIssue = async (user, repos, el) => {
     el.preventDefault();
-    dataSubmit.labels = dataSubmit.labels.split(',').filter(item => item !== '');
-    console.log(dataSubmit.labels)
-    if(!dataSubmit.title || !dataSubmit.content) {
-      alert('Dont leave title or content box blank!!')
+    dataSubmit.labels = dataSubmit.labels
+      .split(",")
+      .filter(item => item !== "");
+    if (!dataSubmit.title || !dataSubmit.content) {
+      alert("Dont leave title or content box blank!!");
       return false;
     }
     try {
-      const issue = {title: dataSubmit.title, body: dataSubmit.content, labels: dataSubmit.labels}
+      const issue = {
+        title: dataSubmit.title,
+        body: dataSubmit.content,
+        labels: dataSubmit.labels
+      };
       const url = `https://api.github.com/repos/${user}/${repos}/issues`;
       const response = await fetch(url, {
         method: "POST",
@@ -239,15 +245,13 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your issue had been created successfully!");
-        setDataSubmit({title: '', content: '', labels: []});
+        setDataSubmit({ title: "", content: "", labels: [] });
         setCreateIssueModal(false);
       }
     } catch (e) {
       console.log(e);
     }
-  }
-
-
+  };
 
   const postComment = async (user, repos, comment, ids) => {
     if (!comment) {
@@ -268,14 +272,14 @@ export default function App() {
       if (response.ok) {
         alert("Your comment had been created successfully!");
         setCreateComment("");
-        toggleIssue(ids); //id
+        toggleIssue(ids);
       }
-    } catch (e) { 
+    } catch (e) {
       console.log(e);
     }
   };
 
-  const editComment = async (user, repos,idEdit, id) => {
+  const editComment = async (user, repos, idEdit, id) => {
     let value = prompt("Type what you want to change");
     if (!value) {
       alert("Don't leave the comment blank");
@@ -295,7 +299,9 @@ export default function App() {
       if (response.ok) {
         alert("Your comment had been changed successfully!");
         toggleIssue(id); //id
-      } else if (response.status === 403) {alert('You dont have any authorize to edit this comment!');}
+      } else if (response.status === 403) {
+        alert("You dont have any authorize to edit this comment!");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -314,24 +320,33 @@ export default function App() {
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
         toggleIssue(ids); //id issue
-      } else if (response.status === 403) {alert('You dont have any authorize to delete this comment!');}
+      } else if (response.status === 403) {
+        alert("You dont have any authorize to delete this comment!");
+      }
     } catch (e) {
       console.log(e);
     }
   };
 
-  // if (!token) {
-  //   return (
-  //       <div>On Loading...</div>
-  //   )
-  // }
+  if (!token) {
+    return <h1>fuck</h1>;
+  }
   return (
     <div className="App">
-      /*<NewIssue dataSubmit={dataSubmit} setDataSubmit={setDataSubmit} toggleCreateIssue={createIssueModal} setCreateIssue={setCreateIssueModal} postIssue={postIssue} onInputChange={onInputChange}/>
+      <NewIssue
+        dataSubmit={dataSubmit}
+        setDataSubmit={setDataSubmit}
+        toggleCreateIssue={createIssueModal}
+        setCreateIssue={setCreateIssueModal}
+        postIssue={postIssue}
+        onInputChange={onInputChange}
+      /> //ưhen you make the api pót call to post the issue. Where are you posting it on github?? 
+      / Which repo on current repot has been chosen.
+      /Hmmm current Repo. Hmm. So, how does the user know what is the current repo use must choose the repo first. How? 
       <ShowIssue
         toggleModal={showModal}
         setShowModal={setShowModal}
-        issueSelected={issueInModal}
+        issueSelected={issue}
         CommentsList={commentExist}
         setCreateComment={setCreateComment}
         createComment={createComment}
@@ -341,8 +356,7 @@ export default function App() {
         deleteComment={deleteComment}
         token={token}
         toggleIssue={toggleIssue}
-      />*/
-  
+      />
       <Navbar />
       <div className="row">
         <div className="col-2 px-0"></div>
@@ -411,7 +425,7 @@ export default function App() {
             <ListOfResults
               issues={issues}
               repos={repos}
-              toggleIssue={(ids) => toggleIssue(ids)}
+              toggleIssue={ids => toggleIssue(ids)}
               displayWhat={displayWhat}
               page={page}
               perPage={perPage}
@@ -426,8 +440,5 @@ export default function App() {
         </div>
       </div>
     </div>
-  
-    )// alittle test
+  );
 }
-
-
