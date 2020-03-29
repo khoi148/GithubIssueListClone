@@ -6,7 +6,7 @@ import NewIssue from './components/NewIssue'
 const clientId = process.env.REACT_APP_CLIENT_ID;
 function App(props) {
   let [createIssueModal, setCreateIssueModal] = useState(false);
-  let [dataSubmit, setDataSubmit] = useState({title: '', content: ''});
+  let [dataSubmit, setDataSubmit] = useState({title: '', content: '', labels: []});
   const [token, setToken] = useState(null);
   let [showModal, setShowModal] = useState(false);
   let [commentExist, setCommentExist] = useState([]);
@@ -115,13 +115,14 @@ function App(props) {
   }
 
   const postIssue = async(el) => {
-    el.preventDefault()
+    el.preventDefault();
+    dataSubmit.labels = dataSubmit.labels.split(',').filter(item => item !== '');
     if(!dataSubmit.title || !dataSubmit.content) {
       alert('Dont leave title or content box blank!!')
       return false;
     }
     try {
-      const issue = {title: dataSubmit.title, body: dataSubmit.content}
+      const issue = {title: dataSubmit.title, body: dataSubmit.content, labels: dataSubmit.labels}
       const url = `https://api.github.com/repos/${user}/${repos}/issues`;
       const response = await fetch(url, {
         method: "POST",
@@ -133,7 +134,7 @@ function App(props) {
       });
       if (response.ok) {
         alert("Your issue had been created successfully!");
-        setDataSubmit({title: '', content: ''});
+        setDataSubmit({title: '', content: '', labels: []});
       }
     } catch (e) {
       console.log(e);

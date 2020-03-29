@@ -47,3 +47,9 @@
   border-right: 1px solid gray;
   
 }
+
+.btn-suggest {
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 5px;
+}
