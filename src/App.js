@@ -342,6 +342,9 @@ export default function App() {
                   Milestones (10)
               </button>
               </div>
+              <div className="p-3 text-muted">
+                  Please search for issues or repositories above
+                </div>
             </div>
             {issues.length !== 0 || repos.length !== 0 ? (
               <ListOfResults
@@ -357,9 +360,8 @@ export default function App() {
                 currentQuery={currentQuery}
               />
             ) : (
-                <span className="p-0 text-muted">
-                  Please search for issues or repositories above
-                </span>
+              <div></div>
+                
               )}
           </div>
         </div>
