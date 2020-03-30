@@ -49,7 +49,7 @@ export default function App() {
         err ? outputText.innerText = "Error Authenticating with GitHub: " + err : 
         setToken(data.token)}
       }
-  
+  useEffect(run,'');
  // function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
  //   const existingToken = localStorage.getItem("token");
