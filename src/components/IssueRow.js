@@ -4,13 +4,16 @@ import openLogo from "../img/open.svg";
 import moment from "moment";
 
 export default function IssueRow(props) {
-  let user = props.issue.repository_url.split('repos/')[1].split('/')[0]
-  let repos = props.issue.repository_url.split('repos/')[1].split('/')[1]
+  let user = props.issue.repository_url.split("repos/")[1].split("/")[0];
+  let repos = props.issue.repository_url.split("repos/")[1].split("/")[1];
 
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
-        <a onClick={() => props.toggle(user, repos, props.issue.number)}>
+        <a
+          href="#!"
+          onClick={() => props.toggle(user, repos, props.issue.number)}
+        >
           <h5 className="text-dark">
             {props.issue.title}
             <img
@@ -19,10 +22,27 @@ export default function IssueRow(props) {
               src={props.issue.state === "closed" ? closeLogo : openLogo}
             />
           </h5>
+          {props.issue.labels &&
+            props.issue.labels.map(item => {
+              return (
+                <button
+                  className="labels-btn mx-1"
+                  style={{
+                    borderRadius: "5px",
+                    padding: "5px 5px 5px 5px",
+                    backgroundColor: `#${item.color}`,
+                    fontSize: "10px",
+                    fontWeight: "normal"
+                  }}
+                >
+                  {item.name}
+                </button>
+              );
+            })}
         </a>
-        <h5 className="text-primary my-3">
+        <h6 className="text-primary my-3">
           For Repo: {props.issue.url.split(".com/repos/")[1]}
-        </h5>
+        </h6>
         <h6 className="text-muted">
           #{props.issue.number} opened{" "}
           {moment(props.issue.updated_at).fromNow()}

@@ -5,21 +5,24 @@ export default function RepoRow(props) {
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
-        <a
-          href="#!"
-          onClick={() => props.apiSearchIssuesMethod(props.repo.full_name)}
-        >
-          <h5 className="text-primary" style={{ fontSize: "2rem" }}>
+        <div className="d-flex align-items-center justify-content-between">
+          <a
+            className="text-primary"
+            style={{ fontSize: "2rem" }}
+            href="#!"
+            onClick={() => props.apiSearchIssuesMethod(props.repo.full_name)}
+          >
             {props.repo.full_name}
-          </h5>
-        </a>
-        <NewIssue
-          token={props.token}
-          user={props.repo.owner.login}
-          repo={props.repo.name}
-          // toggleCreateIssue={createIssueModal}
-          // setCreateIssue={setCreateIssueModal}
-        />
+          </a>
+          <NewIssue
+            token={props.token}
+            user={props.repo.owner.login}
+            repo={props.repo.name}
+            // toggleCreateIssue={createIssueModal}
+            // setCreateIssue={setCreateIssueModal}
+          />
+        </div>
+
         <h5 className="my-3" style={{ fontSize: "14px" }}>
           {props.repo.description}
         </h5>

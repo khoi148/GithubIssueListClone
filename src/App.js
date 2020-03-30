@@ -90,7 +90,7 @@ export default function App() {
     const responseJson = await response.json();
     setDisplayWhat({ repo: true, issue: false });
     setRepos(responseJson); //1 page of results in an array
-    // console.log("repo", responseJson);
+    console.log("repo", responseJson);
   }
   async function apiSearchIssues(query = "facebook", pageSet = 1) {
     if (pageSet === 1) setPage(1);
@@ -116,6 +116,7 @@ export default function App() {
     const responseJson = await response.json();
     setDisplayWhat({ repo: false, issue: true });
     setIssues(responseJson);
+    console.log("issues", responseJson);
   }
 
   async function pageSwitch(pageNum, displayWhat) {
@@ -206,15 +207,15 @@ export default function App() {
     }
   };
 
-  const postComment = async (comment) => {
+  const postComment = async comment => {
     if (!comment) {
       alert("Don't leave the comment blank");
       return false;
     }
     try {
-      let user = issue.repository_url.split('repos/')[1].split('/')[0]
-      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
-      let ids = issue.number
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
+      let ids = issue.number;
       const issues = { body: comment };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
       const response = await fetch(url, {
@@ -228,16 +229,16 @@ export default function App() {
       if (response.ok) {
         alert("Your comment had been created successfully!");
         setCreateComment("");
-        toggleIssue(user,repos,ids);
+        toggleIssue(user, repos, ids);
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  const editComment = async (idEdit) => {
-    let user = issue.repository_url.split('repos/')[1].split('/')[0]
-    let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+  const editComment = async idEdit => {
+    let user = issue.repository_url.split("repos/")[1].split("/")[0];
+    let repos = issue.repository_url.split("repos/")[1].split("/")[1];
     let ids = issue.number;
     let value = prompt("Type what you want to change");
     if (!value) {
@@ -257,7 +258,7 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your comment had been changed successfully!");
-        toggleIssue(user,repos,ids); //id
+        toggleIssue(user, repos, ids); //id
       } else if (response.status === 403) {
         alert("You dont have any authorize to edit this comment!");
       }
@@ -266,10 +267,10 @@ export default function App() {
     }
   };
 
-  const deleteComment = async (idDelete) => {
+  const deleteComment = async idDelete => {
     try {
-      let user = issue.repository_url.split('repos/')[1].split('/')[0]
-      let repos = issue.repository_url.split('repos/')[1].split('/')[1]
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
       let ids = issue.number;
       const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idDelete}`;
       const response = await fetch(url, {
@@ -281,7 +282,7 @@ export default function App() {
       });
       if (response.ok) {
         alert("Your comment had been deleted successfully!");
-        toggleIssue(user,repos,ids); //id issue
+        toggleIssue(user, repos, ids); //id issue
       } else if (response.status === 403) {
         alert("You dont have any authorize to delete this comment!");
       }
@@ -308,60 +309,62 @@ export default function App() {
         deleteComment={deleteComment}
         token={token}
         toggleIssue={toggleIssue}
-  />
+      />
 
       <Navbar />
       <div className="row">
         <div className="col-2 px-0"></div>
 
         <div className="col-8 px-0">
-
+          <div className="row pt-3">
             {/* these are tabs: Code Issues Pull-Reuquests ... */}
             <ProjectTabs />
 
-          {/* Filter Bar */}
-          <div className="row mt-3">
-            <SearchBar
-              apiSearchReposMethod={input => apiSearchRepos(input)}
-              apiSearchIssuesMethod={input => apiSearchIssues(input)}
-            />
-            <div className="col-4 d-flex px-0 justify-content-between">
-              <button
-                type="button"
-                className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mx-2"
-                style={{ height: "30px" }}
-              >
-                Labels (12)
+            {/* Filter Bar */}
+            <div className="row mt-3">
+              <SearchBar
+                apiSearchReposMethod={input => apiSearchRepos(input)}
+                apiSearchIssuesMethod={input => apiSearchIssues(input)}
+              />
+              <div className="col-4 d-flex px-0 justify-content-between">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mx-2"
+                  style={{ height: "30px" }}
+                >
+                  Labels (12)
               </button>
-              <button
-                type="button"
-                className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mr-2"
-                style={{ height: "30px" }}
-              >
-                Milestones (10)
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary text-dark btn-sm flex-grow-1 mr-2"
+                  style={{ height: "30px" }}
+                >
+                  Milestones (10)
               </button>
+              </div>
             </div>
+            {issues.length !== 0 || repos.length !== 0 ? (
+              <ListOfResults
+                issues={issues}
+                repos={repos}
+                toggleIssue={toggleIssue}
+                token={token}
+                apiSearchIssuesMethod={query => apiSearchIssues(query)}
+                displayWhat={displayWhat}
+                page={page}
+                perPage={perPage}
+                pageSwitch={(input, display) => pageSwitch(input, display)}
+                currentQuery={currentQuery}
+              />
+            ) : (
+                <span className="p-0 text-muted">
+                  Please search for issues or repositories above
+                </span>
+              )}
           </div>
-          {issues.length !== 0 || repos.length !== 0 ? (
-            <ListOfResults
-              issues={issues}
-              repos={repos}
-              toggleIssue={toggleIssue}
-              token={token}
-              apiSearchIssuesMethod={query => apiSearchIssues(query)}
-              displayWhat={displayWhat}
-              page={page}
-              perPage={perPage}
-              pageSwitch={(input, display) => pageSwitch(input, display)}
-              currentQuery={currentQuery}
-            />
-          ) : (
-            <span className="p-0 text-muted">
-              Please search for issues or repositories above
-            </span>
-          )}
         </div>
       </div>
     </div>
+
   );
 }

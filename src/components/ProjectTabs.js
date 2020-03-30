@@ -2,7 +2,11 @@ import React from "react";
 
 export default function ProjectTabs(props) {
   return (
+<<<<<<< HEAD
     <div className="mt-2 pl-3" style={{zIndex: '0'}}>
+=======
+    <div className="mt-2 pl-3">
+>>>>>>> 3c25f2c8923796b6b4cb3e1d373ef447938cabaf
       {/* <div className="btn-group btn-group-toggle" data-toggle="buttons">
         <label className="btn btn-secondary">
           <input type="radio" name="options" id="option1" /> Code
@@ -28,7 +32,12 @@ export default function ProjectTabs(props) {
         <label className="btn btn-secondary">
           <input type="radio" name="options" id="option7" /> Insights
         </label>
+<<<<<<< HEAD
       </div> */}
+=======
+      </div>
+     */}
+>>>>>>> 3c25f2c8923796b6b4cb3e1d373ef447938cabaf
     </div>
   );
 }
