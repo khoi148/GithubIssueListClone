@@ -42,40 +42,32 @@ export default function App() {
     issue: false
   });
   
-    const run = (e) => {
-      e.preventDefault();
-      const authenticator = new netlify.default ({});
-      authenticator.authenticate({provider:"github", scope: "user"}, (err, data) => {
-        err ? outputText.innerText = "Error Authenticating with GitHub: " + err : 
-        setToken(data.token)}
-      }
-  useEffect(run,'');
- // function setTokenFunc() {
+ function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
- //   const existingToken = localStorage.getItem("token");
- //   const accessToken =
- //     window.location.search.split("=")[0] === "?access_token"
- //     ? window.location.search.split("&scope")[0].split("access_token=")[1]
- //       : null;
+    const existingToken = localStorage.getItem("token");
+   const accessToken =
+     window.location.search.split("=")[0] === "?access_token"
+    ? window.location.search.split("&scope")[0].split("access_token=")[1]
+       : null;
 
- //   if (!accessToken && !existingToken) {
- //     window.location.replace(
- //       `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
-  //    );
-  //  }
+    if (!accessToken && !existingToken) {
+     window.location.replace(
+       `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
+     );
+    }
 
-  //  if (accessToken) {
-  //    console.log(`New accessToken: ${accessToken}`);
+    if (accessToken) {
+      console.log(`New accessToken: ${accessToken}`);
 
-  //    localStorage.setItem("token"); //store token in local storage
-   //   setToken(accessToken.split("&")[0]);
-   // }
+     localStorage.setItem("token"); //store token in local storage
+     setToken(accessToken.split("&")[0]);
+    }
 
-   // if (existingToken) {
-   //   console.log("existing token: ", existingToken);
-   //   setToken(existingToken.split("&")[0]);
-   // }
- // }
+    if (existingToken) {
+      console.log("existing token: ", existingToken);
+      setToken(existingToken.split("&")[0]);
+    }
+  }
   async function apiSearchRepos(query = "khoi148", pageSet = 1) {
     if (pageSet === 1) setPage(1);
 
