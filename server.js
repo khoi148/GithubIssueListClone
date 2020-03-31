@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 const secretKey = process.env.REACT_APP_SECRET_KEY;
+const port = process.env.PORT || 3000;
 
 console.log("started server on port 5000");
 
@@ -22,7 +23,7 @@ http
         },
         (err, r, body) => {
           res.writeHead(301, {
-            Location: "http://localhost:3000?" + body
+            Location: "https://githubbychinh.herokuapp.com?" + body
           });
           res.end();
         }
@@ -32,4 +33,4 @@ http
       res.end();
     }
   })
-  .listen(5000);
+  .listen(port);

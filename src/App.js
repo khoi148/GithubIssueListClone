@@ -7,6 +7,7 @@ import ProjectTabs from "./components/ProjectTabs.js";
 import Navbar from "./components/Navbar.js";
 import SearchBar from "./components/SearchBar.js";
 
+const clientId = process.env.REACT_APP_CLIENT_ID;
 let URL_SEARCH_REPOS_BEG = `https://api.github.com/search/repositories?q=`;
 let URL_SEARCH_ISSUES_BEG = `https://api.github.com/search/issues?q=`;
 let additional_qualifier = "";
@@ -31,7 +32,6 @@ export default function App() {
   // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
 
   // let page = 1;
-  const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
@@ -44,7 +44,7 @@ export default function App() {
  function setTokenFunc() {
     //this gets an existing token from local server, if not exist call server to get token
     const existingToken = localStorage.getItem("token");
-   const accessToken =
+    const accessToken =
      window.location.search.split("=")[0] === "?access_token"
     ? window.location.search.split("&scope")[0].split("access_token=")[1]
        : null;
@@ -56,9 +56,8 @@ export default function App() {
     }
 
     if (accessToken) {
-      console.log(`New accessToken: ${accessToken}`);
-
-     localStorage.setItem("token"); //store token in local storage
+    console.log(`New accessToken: ${accessToken}`);
+     localStorage.setItem("token", accessToken); //store token in local storage
      setToken(accessToken.split("&")[0]);
     }
 
