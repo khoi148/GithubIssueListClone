@@ -7,6 +7,16 @@ const secretKey = process.env.REACT_APP_SECRET_KEY;
 const serverPort = 5000;
 const port = process.env.PORT || serverPort;
 
+var sslRedirect = require('heroku-ssl-redirect');
+var express = require('express');
+var app = express();
+// enable ssl redirect
+app.use(sslRedirect());
+app.get('/', function(req, res){
+  res.send('hello world');
+});
+app.listen(3000);
+
 console.log("started server on port 5000");
 
 http
