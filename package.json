@@ -19,6 +19,8 @@
     "request": "^2.88.2"
   },
   "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
