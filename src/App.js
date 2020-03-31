@@ -7,7 +7,7 @@ import ProjectTabs from "./components/ProjectTabs.js";
 import Navbar from "./components/Navbar.js";
 import SearchBar from "./components/SearchBar.js";
 
-const clientId = process.env.REACT_APP_CLIENT_ID;
+const clientId = prompt('Provide your client ID');
 let URL_SEARCH_REPOS_BEG = `https://api.github.com/search/repositories?q=`;
 let URL_SEARCH_ISSUES_BEG = `https://api.github.com/search/issues?q=`;
 let additional_qualifier = "";
