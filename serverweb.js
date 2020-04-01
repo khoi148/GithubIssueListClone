@@ -6,8 +6,8 @@ const axios = require('axios')
 
 // This is the client ID and client secret that you obtained
 // while registering the application
-const clientID = '72ed9cbcdaa66f954d55'
-const clientSecret = '3799377ed248f3f4b023f5ab3bf1e34acc59f597'
+const clientID = process.env.REACT_APP_CLIENT_ID;
+const clientSecret = process.env.REACT_APP_SECRET_KEY;
 
 const serverport = process.env.PORT || 5000;
 // Declare the redirect route
