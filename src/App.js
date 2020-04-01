@@ -5,7 +5,7 @@ import DetailIssue from './pages/DetailIssue';
 import AddNewIssue from './pages/AddNewIssue';
 
 
-const clientId = '72ed9cbcdaa66f954d55';
+const clientId = process.env.OAUTH_CLIENT_ID;
 
 export default function App() {
     const [token, setToken] = useState(null);

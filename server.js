@@ -4,7 +4,6 @@ require("dotenv").config();
 
 const clientId = process.env.OAUTH_CLIENT_ID;
 const secretKey = process.env.OAUTH_CLIENT_SECRET;
-const server = process.env.PORT || 5000;
 
 console.log("started server on port 5000");
 
@@ -23,7 +22,7 @@ http
         },
         (err, r, body) => {
           res.writeHead(301, {
-            Location: "https://friendly-engelbart-48c060.netlify.com?" + body
+            Location: "https://githubissue-test.netlify.com/?" + body
           });
           res.end();
         }
@@ -33,4 +32,4 @@ http
       res.end();
     }
   })
-  .listen(server);
+  .listen(5000);
