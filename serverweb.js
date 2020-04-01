@@ -1,40 +1,112 @@
+require('dotenv').config({silent: true})
 const express = require('express')
+const simpleOauthModule = require('simple-oauth2')
+const randomstring = require('randomstring')
+const port = process.env.PORT || 3000
+const oauthProvider = process.env.OAUTH_PROVIDER || 'github'
+const loginAuthTarget = process.env.AUTH_TARGET || '_self'
+
 const app = express()
+const oauth2 = simpleOauthModule.create({
+  client: {
+    id: process.env.OAUTH_CLIENT_ID,
+    secret: process.env.OAUTH_CLIENT_SECRET
+  },
+  auth: {
+    // Supply GIT_HOSTNAME for enterprise github installs.
+    tokenHost: process.env.GIT_HOSTNAME || 'https://github.com',
+    tokenPath: process.env.OAUTH_TOKEN_PATH || '/login/oauth/access_token',
+    authorizePath: process.env.OAUTH_AUTHORIZE_PATH || '/login/oauth/authorize'
+  }
+})
 
-// Import the axios library, to make HTTP requests
-const axios = require('axios')
+const originPattern = process.env.ORIGIN || ''
+if (('').match(originPattern)) {
+  console.warn('Insecure ORIGIN pattern used. This can give unauthorized users access to your repository.')
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Will not run without a safe ORIGIN pattern in production.')
+    process.exit()
+  }
+}
 
-// This is the client ID and client secret that you obtained
-// while registering the application
-const clientID = process.env.REACT_APP_CLIENT_ID;
-const clientSecret = process.env.REACT_APP_SECRET_KEY;
+// Authorization uri definition
+const authorizationUri = oauth2.authorizationCode.authorizeURL({
+  redirect_uri: process.env.REDIRECT_URL,
+  scope: process.env.SCOPES || 'repo,user',
+  state: randomstring.generate(32)
+})
 
-const serverport = process.env.PORT || 5000;
-// Declare the redirect route
-app.get('/', (req, res) => {
+// Initial page redirecting to Github
+app.get('/auth', (req, res) => {
+  res.redirect(authorizationUri)
+})
 
-  // The req.query object has the query params that were sent to this route.
-  const requestToken = req.query.code
-  
-  axios({
-    method: 'post',
-    url: `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}`,
-    // Set the content type header, so that we get the response in JSON
-    headers: {
-         accept: 'application/json'
+// Callback service parsing the authorization token and asking for the access token
+app.get('/callback', (req, res) => {
+  const code = req.query.code
+  var options = {
+    code: code
+  }
+
+  if (oauthProvider === 'gitlab') {
+    options.client_id = process.env.OAUTH_CLIENT_ID
+    options.client_secret = process.env.OAUTH_CLIENT_SECRET
+    options.grant_type = 'authorization_code'
+    options.redirect_uri = process.env.REDIRECT_URL
+  }
+
+  oauth2.authorizationCode.getToken(options, (error, result) => {
+    let mess, content
+
+    if (error) {
+      console.error('Access Token Error', error.message)
+      mess = 'error'
+      content = JSON.stringify(error)
+    } else {
+      const token = oauth2.accessToken.create(result)
+      mess = 'success'
+      content = {
+        token: token.token.access_token,
+        provider: oauthProvider
+      }
     }
-    
-  }).then((response) => {
-    
-    const accessToken = response.data.access_token
-    console.log(response.data)
-    
-    // redirect the user to the home page, along with the access token
-    res.redirect(`/?access_token=${accessToken}`)
+
+    const script = `
+    <script>
+    (function() {
+      function recieveMessage(e) {
+        console.log("recieveMessage %o", e)
+        if (!e.origin.match(${JSON.stringify(originPattern)})) {
+          console.log('Invalid origin: %s', e.origin);
+          return;
+        }
+        // send message to main window with da app
+        window.opener.postMessage(
+          'authorization:${oauthProvider}:${mess}:${JSON.stringify(content)}',
+          e.origin
+        )
+      }
+      window.addEventListener("message", recieveMessage, false)
+      // Start handshare with parent
+      console.log("Sending message: %o", "${oauthProvider}")
+      window.opener.postMessage("authorizing:${oauthProvider}", "*")
+    })()
+    </script>`
+    return res.send(script)
   })
 })
 
-app.use(express.static(__dirname + '/public'))
-app.listen(serverport,()=>{
-    console.log("Server listening on port : 5000")
+app.get('/success', (req, res) => {
+  res.send('')
+})
+
+app.get('/', (req, res) => {
+  res.send(`Hello<br>
+    <a href="/auth" target="${loginAuthTarget}">
+      Log in with ${oauthProvider.toUpperCase()}
+    </a>`)
+})
+
+app.listen(port, () => {
+  console.log("gandalf is walkin' on port " + port)
 })

@@ -1,0 +1,5 @@
+backend:
+  name: [github | gitlab]
+  repo: ldchinhcr/GithubIssueListClone   # Path to your Github/Gitlab repository
+  branch: chinh    # Branch to update
+  base_url: https://friendly-engelbart-48c060.netlify.com/ # Path to ext auth provider

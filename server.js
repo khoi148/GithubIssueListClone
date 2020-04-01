@@ -2,8 +2,8 @@ const http = require("http");
 const request = require("request");
 require("dotenv").config();
 
-const clientId = process.env.REACT_APP_CLIENT_ID;
-const secretKey = process.env.REACT_APP_SECRET_KEY;
+const clientId = process.env.OAUTH_CLIENT_ID;
+const secretKey = process.env.OAUTH_CLIENT_SECRET;
 const server = process.env.PORT || 5000;
 
 console.log("started server on port 5000");
