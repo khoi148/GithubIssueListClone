@@ -126,7 +126,7 @@ export default function App() {
     else if (pageNum === "prev-5") pageLocal -= 5;
     else pageLocal = parseInt(pageNum);
 
-const clientId = process.env.OAUTH_CLIENT_ID;
+const clientId = '72ed9cbcdaa66f954d55';
 
 export default function App() {
     const [token, setToken] = useState(null);
