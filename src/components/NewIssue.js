@@ -1,78 +1,23 @@
 import React, { useState } from "react";
 import ReactModal from "react-modal";
 import { Tab, Tabs } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export default function NewIssue(props) {
   //props user, repo
-  const [key, setKey] = useState("createissue");
-  const [isOpen, setIsOpen] = useState(false);
-
-  let [dataSubmit, setDataSubmit] = useState({
-    title: "",
-    content: "",
-    labels: []
-  });
-  const onInputChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setDataSubmit({
-      ...dataSubmit,
-      [name]: value
-    });
-  };
-
-  const postIssue = async e => {
-    e.preventDefault();
-    if (typeof dataSubmit.labels === "string")
-      dataSubmit.labels = dataSubmit.labels
-        .split(",")
-        .filter(item => item !== "");
-    console.log(dataSubmit.labels);
-    if (!dataSubmit.title || !dataSubmit.content) {
-      alert("Dont leave title or content box blank!!");
-      return false;
-    }
-
-    try {
-      const issue = {
-        title: dataSubmit.title,
-        body: dataSubmit.content,
-        labels: dataSubmit.labels
-      };
-      const url = `https://api.github.com/repos/${props.user}/${props.repo}/issues`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `token ${props.token}`
-        },
-        body: JSON.stringify(issue)
-      });
-      console.log(props.token);
-      if (response.ok) {
-        alert("Your issue had been created successfully!");
-        setDataSubmit({ title: "", content: "", labels: [] });
-        setIsOpen(false);
-        // setCreateIssueModal(false);
-      } else {
-        alert("The issue was not posted. API Error on POST");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   return (
     <div>
-      <button
-        type="button"
-        className="btn btn-success btn-sm flex-grow-1"
+      <Link
+        to={`/addnewissue/${props.user}/${props.repo}`}
+        className="flex-grow-1"
         style={{ height: "30px" }}
-        onClick={() => setIsOpen(true)}
       >
-        New Issue
-      </button>
-      <ReactModal
+        <button className="btn btn-success btn-sm text-light text-decoration-none">
+          New Issue
+        </button>
+      </Link>
+      {/* <ReactModal
         ariaHideApp={false}
         isOpen={isOpen}
         style={{ overlay: { display: "flex", justifyContent: "center" } }}
@@ -309,6 +254,7 @@ export default function NewIssue(props) {
           </button>
         </form>
       </ReactModal>
+     */}
     </div>
   );
 }
