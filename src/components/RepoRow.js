@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import NewIssue from "./NewIssue.js";
+import {Link} from 'react-router-dom'
 export default function RepoRow(props) {
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
@@ -9,18 +9,11 @@ export default function RepoRow(props) {
           <a
             className="text-primary"
             style={{ fontSize: "2rem" }}
-            href="#!"
             onClick={() => props.apiSearchIssuesMethod(props.repo.full_name)}
           >
             {props.repo.full_name}
           </a>
-          <NewIssue
-            token={props.token}
-            user={props.repo.owner.login}
-            repo={props.repo.name}
-            // toggleCreateIssue={createIssueModal}
-            // setCreateIssue={setCreateIssueModal}
-          />
+          <Link to={`/addnewissue/${props.repo.owner.login}/${props.repo.name}`}><button className='btn btn-success'>New Issue</button></Link>
         </div>
 
         <h5 className="my-3" style={{ fontSize: "14px" }}>

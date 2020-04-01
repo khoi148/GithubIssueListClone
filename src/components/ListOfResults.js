@@ -6,8 +6,8 @@ import Pagination from "react-bootstrap/Pagination";
 export default class ListOfResults extends Component {
   //this.props. repos | issues | displayWhat {repo: false, issue: false}
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       arrayOfPages: []
     };
@@ -152,7 +152,8 @@ export default class ListOfResults extends Component {
           {this.props.issues.items !== undefined &&
             this.props.displayWhat.issue === true &&
             this.props.issues.items.map(item => {
-              return <IssueRow toggle={this.props.toggleIssue} issue={item} />;
+              return <IssueRow 
+              issue={item} />;
             })}
 
           {this.props.repos.items !== undefined &&

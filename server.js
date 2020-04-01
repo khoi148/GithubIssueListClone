@@ -4,18 +4,7 @@ require("dotenv").config();
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 const secretKey = process.env.REACT_APP_SECRET_KEY;
-const serverPort = 5000;
-const port = process.env.PORT || serverPort;
-
-var sslRedirect = require('heroku-ssl-redirect');
-var express = require('express');
-var app = express();
-// enable ssl redirect
-app.use(sslRedirect());
-app.get('/', function(req, res){
-  res.send('hello world');
-});
-app.listen(3000);
+const server = process.env.PORT || 5000;
 
 console.log("started server on port 5000");
 
@@ -34,7 +23,7 @@ http
         },
         (err, r, body) => {
           res.writeHead(301, {
-            Location: "https://githubbychinh.herokuapp.com?" + body
+            Location: "http://localhost:3000?" + body
           });
           res.end();
         }
@@ -44,4 +33,4 @@ http
       res.end();
     }
   })
-  .listen(port);
+  .listen(server);

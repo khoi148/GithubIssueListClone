@@ -2,6 +2,7 @@ import React from "react";
 import closeLogo from "../img/close.svg";
 import openLogo from "../img/open.svg";
 import moment from "moment";
+import {Link} from 'react-router-dom'
 
 export default function IssueRow(props) {
   let user = props.issue.repository_url.split("repos/")[1].split("/")[0];
@@ -10,9 +11,8 @@ export default function IssueRow(props) {
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
-        <a
-          href="#!"
-          onClick={() => props.toggle(user, repos, props.issue.number)}
+        <Link
+          to={`/issue/${user}/${repos}/${props.issue.number}`}
         >
           <h5 className="text-dark">
             {props.issue.title}
@@ -39,7 +39,7 @@ export default function IssueRow(props) {
                 </button>
               );
             })}
-        </a>
+        </Link>
         <h6 className="text-primary my-3">
           For Repo: {props.issue.url.split(".com/repos/")[1]}
         </h6>
