@@ -12,24 +12,12 @@ let url = "";
 let currentQuery = "";
 let perPage = 12;
 export default function App() {
-  // let [createIssueModal, setCreateIssueModal] = useState(false);
 
-  let [showModal, setShowModal] = useState(false);
   let [commentExist, setCommentExist] = useState([]);
   let [issue, setIssue] = useState(null);
 
   let [createComment, setCreateComment] = useState("");
   let [reactionsThread, setReactionsThread] = useState([]);
-  // Set user/repos/ids to test modal // remove them after making function to get Repos with issue list to hook ↓
-  // install markdown : npm install --save react-markdown
-  // install moment: npm install --save moment react-moment
-  // const user = "hungprok";
-  // const repos = "Tictactoe";
-  // const ids = '3';
-  // Set user/repos/ids to test modal --> remove them after making function to get Repos with issue list to hook ↑
-
-  // let page = 1;
-  const clientId = process.env.REACT_APP_CLIENT_ID;
   const [token, setToken] = useState(null);
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
@@ -53,15 +41,12 @@ export default function App() {
     }
 
     if (accessToken) {
-      console.log(`New accessToken: ${accessToken}`);
-
       localStorage.setItem("token", accessToken); //store token in local storage
-      setToken(accessToken.split("&")[0]);
+      setToken(accessToken);
     }
 
     if (existingToken) {
-      console.log("existing token: ", existingToken);
-      setToken(existingToken.split("&")[0]);
+      setToken(existingToken);
     }
   }
   async function apiSearchRepos(query = "khoi148", pageSet = 1) {
