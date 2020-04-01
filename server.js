@@ -23,7 +23,7 @@ http
         },
         (err, r, body) => {
           res.writeHead(301, {
-            Location: "http://localhost:3000?" + body
+            Location: "https://friendly-engelbart-48c060.netlify.com?" + body
           });
           res.end();
         }

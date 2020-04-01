@@ -32,9 +32,9 @@
     "typescript": "^3.6.0"
   },
   "scripts": {
-    "start": "react-scripts start node serverweb.js",
+    "start": "react-scripts start",
     "dev": "nodemon serverweb.js",
-    "build": "react-scripts build node serverweb.js",
+    "build": "react-scripts build",
     "test": "react-scripts test echo \"Error: no test specified\" && exit 1",
     "eject": "react-scripts eject"
   },
