@@ -4,14 +4,12 @@ import Homepage from './pages/Homepage';
 import DetailIssue from './pages/DetailIssue';
 import AddNewIssue from './pages/AddNewIssue';
 
-
-const clientId = '72ed9cbcdaa66f954d55';
-
 export default function App() {
-    const [token, setToken] = useState(null);
-    function setTokenFunc() {
-        const existingToken = localStorage.getItem("token");
-        const accessToken =
+  const [token, setToken] = useState(null);
+  function setTokenFunc() {
+    const clientId = process.env.OAUTH_CLIENT_ID;
+    const existingToken = localStorage.getItem("token");
+    const accessToken =
             window.location.search.split("=")[0] === "?access_token"
                 ? window.location.search.split("&scope")[0].split("access_token=")[1]
                 : null;
@@ -29,7 +27,7 @@ export default function App() {
         }
 
         if (existingToken) {
-            console.log("existing token: ", existingToken);
+            console.log("Existing token: ", existingToken);
             setToken(existingToken);
         }
     }

@@ -23,6 +23,7 @@ http
         (err, r, body) => {
           res.writeHead(301, {
             Location: "https://githubissue-test.netlify.com/?" + body
+            // Location: "http://localhost:3000?" + body
           });
           res.end();
         }

@@ -4,12 +4,13 @@ import Close from "../assets/icon/close.svg";
 import { Image, Form, Button, Tab, Tabs } from "react-bootstrap";
 import Moment from "react-moment";
 import Comment from "../components/Comment";
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 
 const ReactMarkdown = require("react-markdown");
 
 export default function Issue() {
+    let history = useHistory();
     const {user, repos, ids} = useParams();
     let [commentExist, setCommentExist] = useState([]);
     let [issue, setIssue] = useState(null);
@@ -273,7 +274,8 @@ export default function Issue() {
         return <span></span>;
     } else {
         return (
-            <div>
+            <div className='container'>
+            <button type='button' className='btn btn-secondary' onClick={()=> {history.goBack()}}>Back</button>
                 <h2 className="title-issue my-2">
                     {issue.title}{" "}
                     <span

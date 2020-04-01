@@ -13,10 +13,8 @@ export default function SearchBar(props) {
     console.log("initiated a search, with text: ", event.target.value);
     let searchQuery = event.target.value;
     if (defaultOption === "Repo") {
-      // console.log("searching repos");
       props.apiSearchReposMethod(searchQuery);
     } else if (defaultOption === "Issue") {
-      // console.log("searching issues");
       props.apiSearchIssuesMethod(searchQuery);
     }
   }

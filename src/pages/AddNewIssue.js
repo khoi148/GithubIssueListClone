@@ -50,6 +50,7 @@ export default function AddNewIssue(props) {
                 },
                 body: JSON.stringify(issue)
             });
+            console.log(response)
             if (response.ok) {
                 alert("Your issue had been created successfully!");
                 setDataSubmit({ title: "", content: "", labels: [] });
@@ -286,7 +287,8 @@ export default function AddNewIssue(props) {
                 <button type="submit" className="btn btn-primary mr-2">
                     Submit
             </button>
-                <button type='reset' className='btn btn-primary'>Reset</button>
+                <button type='reset' className='btn btn-primary' onClick={()=> {setDataSubmit({ title: "", content: "", labels: [] })}}>Reset</button>
+                <button type='button' className='btn btn-primary' onClick={()=> {history.goBack()}}>Cancel</button>
             </form>
         </div>
     )
