@@ -1,5 +1,8 @@
+baseurl : "/"
+
 backend:
-  name: [github | gitlab]
+  name: github
   repo: ldchinhcr/GithubIssueListClone   # Path to your Github/Gitlab repository
   branch: chinh    # Branch to update
+  auth_type: implicit
   base_url: https://api.netlify.com/ # Path to ext auth provider
