@@ -58,7 +58,7 @@ export default function App() {
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
 
-      localStorage.setItem("token"); //store token in local storage
+      localStorage.setItem("token", accessToken); //store token in local storage
       setToken(accessToken.split("&")[0]);
     }
 
