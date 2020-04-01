@@ -25,7 +25,7 @@
   "scripts": {
     "start" : "react-scripts start node serverweb.js",
     "dev": "nodemon server.js",
-    "build": "react-scripts build",
+    "build": "react-scripts build node serverweb.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
