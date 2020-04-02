@@ -16,12 +16,13 @@ let currentQuery = "";
 let perPage = 12;
 export default function Homepage(props) {
   let { userParam, repoParam } = useParams();
-  let [showModal, setShowModal] = useState(false);
-  let [commentExist, setCommentExist] = useState([]);
-  let [issue, setIssue] = useState(null);
-
-  let [createComment, setCreateComment] = useState("");
-  let [reactionsThread, setReactionsThread] = useState([]);
+  //Chinhs vars
+  //let [showModal, setShowModal] = useState(false);
+  // let [commentExist, setCommentExist] = useState([]);
+  // let [issue, setIssue] = useState(null);
+  // let [createComment, setCreateComment] = useState("");
+  // let [reactionsThread, setReactionsThread] = useState([]);
+  //my Vars
   const [repos, setRepos] = useState([]);
   const [issues, setIssues] = useState([]);
   const [page, setPage] = useState(1);
@@ -109,150 +110,6 @@ export default function Homepage(props) {
     }
   }
 
-  const toggleIssue = async (user, repos, ids) => {
-    let issueSide = {};
-    try {
-      try {
-        const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}`;
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/vnd.github.squirrel-girl-preview+json"
-          }
-        });
-        const responseJson = await response.json();
-        console.log(response);
-        if (response.ok) {
-          setIssue(responseJson);
-          issueSide = responseJson;
-        }
-      } catch (e) {
-        console.log(e);
-      }
-      try {
-        const urlRec = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/reactions`;
-        const responseRec = await fetch(urlRec, {
-          method: "GET",
-          headers: {
-            Accept: "application/vnd.github.squirrel-girl-preview+json"
-          }
-        });
-        const responseJsonRec = await responseRec.json();
-        if (responseRec.ok && responseJsonRec) {
-          setReactionsThread(responseJsonRec);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
-      if (issueSide.comments > 0) {
-        try {
-          const urlComment = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
-          const responseComment = await fetch(urlComment, {
-            method: "GET",
-            headers: {
-              "Content-Type":
-                "application/vnd.github.squirrel-girl-preview+json"
-            }
-          });
-          const respCommentJS = await responseComment.json();
-          if (responseComment.ok) {
-            setCommentExist(respCommentJS);
-          }
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      setShowModal(true);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const postComment = async comment => {
-    if (!comment) {
-      alert("Don't leave the comment blank");
-      return false;
-    }
-    try {
-      let user = issue.repository_url.split("repos/")[1].split("/")[0];
-      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
-      let ids = issue.number;
-      const issues = { body: comment };
-      const url = `https://api.github.com/repos/${user}/${repos}/issues/${ids}/comments`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `token ${props.token}`
-        },
-        body: JSON.stringify(issues)
-      });
-      if (response.ok) {
-        alert("Your comment had been created successfully!");
-        setCreateComment("");
-        toggleIssue(user, repos, ids);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const editComment = async idEdit => {
-    let user = issue.repository_url.split("repos/")[1].split("/")[0];
-    let repos = issue.repository_url.split("repos/")[1].split("/")[1];
-    let ids = issue.number;
-    let value = prompt("Type what you want to change");
-    if (!value) {
-      alert("Don't leave the comment blank");
-      return false;
-    }
-    try {
-      const issue = { body: value };
-      const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idEdit}`;
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `token ${props.token}`
-        },
-        body: JSON.stringify(issue)
-      });
-      if (response.ok) {
-        alert("Your comment had been changed successfully!");
-        toggleIssue(user, repos, ids); //id
-      } else if (response.status === 403) {
-        alert("You dont have any authorize to edit this comment!");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const deleteComment = async idDelete => {
-    try {
-      let user = issue.repository_url.split("repos/")[1].split("/")[0];
-      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
-      let ids = issue.number;
-      const url = `https://api.github.com/repos/${user}/${repos}/issues/comments/${idDelete}`;
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/vnd.github.squirrel-girl-preview+json",
-          Authorization: `token ${props.token}`
-        }
-      });
-      if (response.ok) {
-        alert("Your comment had been deleted successfully!");
-        toggleIssue(user, repos, ids); //id issue
-      } else if (response.status === 403) {
-        alert("You dont have any authorize to delete this comment!");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
     if (userParam !== undefined && repoParam !== undefined) {
       console.log(
@@ -261,14 +118,15 @@ export default function Homepage(props) {
       apiSearchIssues(`${userParam}/${repoParam}`);
     }
   }, []);
+
   if (!props.token) {
     return <h1>No Token Found</h1>;
   }
   return (
     <div className="App">
-      <ShowIssue
-        toggleModal={showModal}
-        setShowModal={setShowModal}
+      {/* <ShowIssue
+        //toggleModal={showModal}
+        //setShowModal={setShowModal}
         issueSelected={issue}
         CommentsList={commentExist}
         setCreateComment={setCreateComment}
@@ -277,9 +135,9 @@ export default function Homepage(props) {
         reactionsThread={reactionsThread}
         editComment={editComment}
         deleteComment={deleteComment}
-        token={props.token}
+        //token={props.token}
         toggleIssue={toggleIssue}
-      />
+      /> */}
 
       <Navbar />
       <div className="row">
@@ -331,7 +189,6 @@ export default function Homepage(props) {
             <ListOfResults
               issues={issues}
               repos={repos}
-              toggleIssue={toggleIssue}
               token={props.token}
               apiSearchIssuesMethod={query => apiSearchIssues(query)}
               displayWhat={displayWhat}

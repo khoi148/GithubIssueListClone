@@ -4,6 +4,7 @@ import { render } from "react-dom";
 
 import Homepage from "./pages/Homepage.js";
 import AddNewIssue from "./pages/AddNewIssue.js";
+import ShowIssuePage from "./pages/ShowIssuePage.js";
 //import bootstrap;
 const clientId = process.env.REACT_APP_CLIENT_ID;
 
@@ -50,6 +51,11 @@ export default function App() {
           exact
           path="/addnewissue/:user/:repo"
           render={props => <AddNewIssue {...props} token={token} />}
+        />
+        <Route
+          exact
+          path="/showissue/:user/:repo/:issueid"
+          render={props => <ShowIssuePage {...props} token={token} />}
         />
         <Route path="*" render={props => <div>No route found</div>} />
       </Switch>
