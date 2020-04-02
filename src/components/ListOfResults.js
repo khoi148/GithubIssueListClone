@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import IssueRow from "./IssueRow.js";
 import RepoRow from "./RepoRow.js";
 import Pagination from "react-bootstrap/Pagination";
+import {Link, Redirect, useHistory} from 'react-router-dom'
+
 
 export default class ListOfResults extends Component {
   //this.props. repos | issues | displayWhat {repo: false, issue: false}
@@ -54,6 +56,23 @@ export default class ListOfResults extends Component {
       });
     }
   }
+  
+
+  
+
+  onHandleClickNewIssue = () => {
+    if (this.props.currentQuery.includes("/") && this.props.currentQuery.split("/").length === 2) {
+      this.props.history.push(`${`/addnewissue/${this.props.issues.items[0].repository_url.split("repos/")[1].split("/")[0]}/${this.props.issues.items[0].repository_url.split("repos/")[1].split("/")[1]}`}`)
+      } else {
+      const user = prompt('Input owner!')
+      const reps = prompt('Input repository!')
+      if (!user || !reps) {
+        alert('Dont leave either owner or repository blank!')
+      } else{
+        this.props.history.push(`${`/addnewissue/${user}/${reps}`}`)
+      }
+    }
+  }
 
   render() {
     let totalCountRender =
@@ -83,7 +102,12 @@ export default class ListOfResults extends Component {
                 </span>
               )}
             </div>
-            <div className="col-9 d-flex justify-content-end">
+
+            {this.props.issues.items !== undefined &&
+              this.props.displayWhat.issue === true && 
+          <div className='col-9 d-flex justify-content-end flex-column'>
+            <div className="d-flex justify-content-end flex-row">
+
               <div className="btn-group p-0 ml-2" style={{ height: "30px" }}>
                 <div className="btn-group">
                   <button
@@ -112,6 +136,7 @@ export default class ListOfResults extends Component {
                   </div>
                 </div>
               </div>
+
               <div className="btn-group p-0 ml-2" style={{ height: "30px" }}>
                 <div className="btn-group">
                   <button
@@ -129,6 +154,7 @@ export default class ListOfResults extends Component {
                   </div>
                 </div>
               </div>
+
               <div className="btn-group p-0 ml-2" style={{ height: "30px" }}>
                 <div className="btn-group">
                   <button
@@ -146,29 +172,42 @@ export default class ListOfResults extends Component {
                   </div>
                 </div>
               </div>
+
             </div>
+            <div className='d-flex justify-content-end flex-row pt-2'>
+            <button className='btn btn-outline-secondary' onClick={() => 
+              this.onHandleClickNewIssue()
+            }>New Issue</button>
+            </div>
+          </div>
+            }
           </div>
 
           {this.props.issues.items !== undefined &&
             this.props.displayWhat.issue === true &&
             this.props.issues.items.map(item => {
-              return <IssueRow 
+              
+              return <IssueRow
               issue={item} />;
-            })}
-
+            })
+          }
+          
           {this.props.repos.items !== undefined &&
             this.props.displayWhat.repo === true &&
             this.props.repos.items.map(item => {
               return (
                 <RepoRow
-                  repo={item}
-                  token={this.props.token}
-                  apiSearchIssuesMethod={input =>
-                    this.props.apiSearchIssuesMethod(input)
-                  }
+                repo={item}
+                token={this.props.token}
+                apiSearchIssuesMethod={input =>
+                  this.props.apiSearchIssuesMethod(input)
+                }
                 />
-              );
-            })}
+                );
+              })}
+            {this.props.issues.total_count === 0 && this.props.displayWhat.issue && this.props.currentQuery.includes('/') 
+            ? <div className='text-center'><h1>No issue available for this Repository - <Link to={`/addnewissue/${this.props.currentQuery}`}
+            >Create One</Link></h1></div> : null}
         </div>
 
         {(this.props.issues.items !== undefined ||

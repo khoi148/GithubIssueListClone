@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { useParams, useHistory } from 'react-router-dom';
 import {Tab, Tabs} from 'react-bootstrap';
-
+import Navbar from '../components/Navbar'
 
 export default function AddNewIssue(props) {
     const [key, setKey] = useState("createissue");
@@ -54,7 +54,8 @@ export default function AddNewIssue(props) {
             if (response.ok) {
                 alert("Your issue had been created successfully!");
                 setDataSubmit({ title: "", content: "", labels: [] });
-                history.goBack();
+                props.apiSearchIssues(`${user}/${repos}`)
+                history.push('/')
             } else {
                 alert("The issue was not posted. API Error on POST");
             }
@@ -64,6 +65,8 @@ export default function AddNewIssue(props) {
     };
     return (
         <div>
+        <Navbar/>
+        <div className='container mt-5'>
             <form onSubmit={event => postIssue(event)}>
                 <Tabs
                     id="controlled-tab-example"
@@ -290,6 +293,7 @@ export default function AddNewIssue(props) {
                 <button type='reset' className='btn btn-primary mr-2' onClick={()=> {setDataSubmit({ title: "", content: "", labels: [] })}}>Reset</button>
                 <button type='button' className='btn btn-primary' onClick={()=> {history.goBack()}}>Cancel</button>
             </form>
+            </div>
         </div>
     )
 }

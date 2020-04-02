@@ -13,7 +13,7 @@ export default function RepoRow(props) {
           >
             {props.repo.full_name}
           </a>
-          <Link to={`/addnewissue/${props.repo.owner.login}/${props.repo.name}`}><button className='btn btn-success'>New Issue</button></Link>
+          <Link to={`/addnewissue/${props.repo.owner.login}/${props.repo.name}`}><button className='btn btn-outline-secondary'>New Issue</button></Link>
         </div>
 
         <h5 className="my-3" style={{ fontSize: "14px" }}>

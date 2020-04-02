@@ -5,11 +5,11 @@ import { Image, Form, Button, Tab, Tabs } from "react-bootstrap";
 import Moment from "react-moment";
 import Comment from "../components/Comment";
 import { useParams, useHistory } from 'react-router-dom';
-
+import Navbar from '../components/Navbar'
 
 const ReactMarkdown = require("react-markdown");
 
-export default function Issue() {
+export default function Issue(props) {
     let history = useHistory();
     const {user, repos, ids} = useParams();
     let [commentExist, setCommentExist] = useState([]);
@@ -274,8 +274,13 @@ export default function Issue() {
         return <span></span>;
     } else {
         return (
-            <div className='container'>
-            <button type='button' className='btn btn-secondary' onClick={()=> {history.goBack()}}>Back</button>
+            <div>
+            <Navbar/>
+            <div className='container mt-5'>
+            <button type='button' className='btn btn-secondary' onClick={()=> {
+                props.apiSearchIssues(`${user}/${repos}`);
+                history.push('/');
+            }}>Back</button>
                 <h2 className="title-issue my-2">
                     {issue.title}{" "}
                     <span
@@ -573,6 +578,7 @@ export default function Issue() {
                     </Form>
                 </div>
             </div>
+        </div>
         )
     }
 }

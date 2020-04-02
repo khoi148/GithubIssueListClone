@@ -58,10 +58,11 @@ export default function SearchBar(props) {
         }}
         className="form-control"
         type="search"
-        placeholder="Search"
+        placeholder="Search for issues or repositories"
         aria-label="Search"
         style={{
-          height: "30px"
+          height: "30px",
+          borderRadius: '0 10px 10px 0'
         }}
       />
     </div>
