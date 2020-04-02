@@ -101,8 +101,6 @@ export default function Homepage(props) {
       totalCount = 0;
     if (pageLocal > Math.max(Math.ceil(totalCount / perPage), 1))
       pageLocal = Math.max(Math.ceil(totalCount / perPage), 1);
-    console.log(totalCount);
-    console.log("pageLocal", pageLocal);
     if (pageOriginal !== pageLocal) {
       setPage(pageLocal);
       if (displayWhat.repo !== undefined && displayWhat.repo === true) {

@@ -59,12 +59,8 @@ export default function ShowIssuePage(props) {
 
   const addReactThread = async (idAdd, id) => {
     try {
-      let user = props.issueSelected.repository_url
-        .split("repos/")[1]
-        .split("/")[0];
-      let repos = props.issueSelected.repository_url
-        .split("repos/")[1]
-        .split("/")[1];
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
 
       let issue = { content: idAdd };
       const url = `https://api.github.com/repos/${user}/${repos}/issues/${id}/reactions`;
@@ -78,7 +74,7 @@ export default function ShowIssuePage(props) {
       });
       if (response.ok) {
         alert("Your reaction had been added successfully!");
-        props.toggleIssue(user, repos, id); //id id issue
+        toggleIssue(user, repos, id); //id id issue
       }
     } catch (e) {
       console.log(e);
@@ -87,12 +83,8 @@ export default function ShowIssuePage(props) {
 
   const statusIssue = async (id, content) => {
     try {
-      let user = props.issueSelected.repository_url
-        .split("repos/")[1]
-        .split("/")[0];
-      let repos = props.issueSelected.repository_url
-        .split("repos/")[1]
-        .split("/")[1];
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
       let status = "";
       if (content === "open") {
         status = "closed";
@@ -111,7 +103,7 @@ export default function ShowIssuePage(props) {
       });
       if (response.ok) {
         alert("Your issue's status had been changed successfully!");
-        props.toggleIssue(user, repos, id); //hmm id huh
+        toggleIssue(user, repos, id); //hmm id huh
       } else if (response.status === 403) {
         alert("You dont have any authorize to change status this issue!");
       }
@@ -122,12 +114,8 @@ export default function ShowIssuePage(props) {
 
   const editIssue = async id => {
     try {
-      let user = props.issueSelected.repository_url
-        .split("repos/")[1]
-        .split("/")[0];
-      let repos = props.issueSelected.repository_url
-        .split("repos/")[1]
-        .split("/")[1];
+      let user = issue.repository_url.split("repos/")[1].split("/")[0];
+      let repos = issue.repository_url.split("repos/")[1].split("/")[1];
       let content = prompt("Your content need to change");
       if (content === "") {
         alert("Dont leave content blank");
@@ -146,7 +134,7 @@ export default function ShowIssuePage(props) {
         });
         if (response.ok) {
           alert("Your issue had been changed successfully!");
-          props.toggleIssue(user, repos, id); //id issue
+          toggleIssue(user, repos, id); //id issue
         } else if (response.status === 403) {
           alert("You dont have any authorize to change content this issue!");
         }
@@ -188,6 +176,7 @@ export default function ShowIssuePage(props) {
         const responseJsonRec = await responseRec.json();
         if (responseRec.ok && responseJsonRec) {
           setReactionsThread(responseJsonRec);
+          toggleIssue(user, repo, issueid);
         }
       } catch (e) {
         console.log(e);
@@ -206,6 +195,7 @@ export default function ShowIssuePage(props) {
           const respCommentJS = await responseComment.json();
           if (responseComment.ok) {
             setCommentExist(respCommentJS);
+            console.log("responseCM", respCommentJS);
           }
         } catch (e) {
           console.log(e);
@@ -307,20 +297,8 @@ export default function ShowIssuePage(props) {
   }, []);
 
   if (issue === null) return <div>Loading</div>;
-  // <div>
-  //   <h1>
-  //     This is the ShowIssuePage.
-  //     {`user: ${user}, repo: ${repo}, issue: ${issueid}`}
-  //   </h1>
-  //   <Link to={`/homepage/${user}/${repo}`}>Go Back to Homepage</Link>
-  // </div>
-
-  // } else {
   return (
     <div
-      //ariaHideApp={false}
-      //isOpen={props.toggleModal}
-      //onRequestClose={() => props.setShowModal(false)}
       style={{
         overlay: { display: "flex", justifyContent: "center" },
         content: {
@@ -570,19 +548,19 @@ export default function ShowIssuePage(props) {
         </div>
       </div>
       <div>
-        {props.CommentsList &&
-          props.CommentsList.map(item => {
+        {commentExist &&
+          commentExist.map(item => {
             return (
               <Comment
-                postComment={props.postComment}
-                editComment={props.editComment}
+                postComment={postComment}
+                editComment={editComment}
                 item={item}
-                user={props.user}
-                repos={props.repos}
+                user={user}
+                repos={repo}
                 token={props.token}
-                deleteComment={props.deleteComment}
-                toggleIssue={props.toggleIssue}
-                issueSelected={props.issueSelected}
+                deleteComment={deleteComment}
+                toggleIssue={toggleIssue}
+                issueSelected={issue}
               />
             );
           })}
@@ -592,7 +570,7 @@ export default function ShowIssuePage(props) {
           className="comment-place"
           onSubmit={el => {
             el.preventDefault();
-            props.postComment(props.createComment);
+            postComment(createComment);
           }}
         >
           <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -605,14 +583,14 @@ export default function ShowIssuePage(props) {
               <Tab eventKey="comment" title="Comment Box">
                 <Form.Control
                   placeholder="Your comment"
-                  value={props.createComment}
-                  onChange={el => props.setCreateComment(el.target.value)}
+                  value={createComment}
+                  onChange={el => setCreateComment(el.target.value)}
                   as="textarea"
                   rows="3"
                 />
               </Tab>
               <Tab eventKey="preview" title="Preview">
-                <p className="mt-3">{props.createComment}</p>
+                <p className="mt-3">{createComment}</p>
               </Tab>
             </Tabs>
             <div className="d-flex justify-content-end align-self-end">
