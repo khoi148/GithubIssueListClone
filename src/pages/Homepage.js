@@ -97,9 +97,12 @@ export default function Homepage(props) {
     // console.log("value", issues.total_count);
     let totalCount =
       displayWhat.repo === true ? repos.total_count : issues.total_count;
+    if (totalCount === null || totalCount === NaN || totalCount === undefined)
+      totalCount = 0;
     if (pageLocal > Math.max(Math.ceil(totalCount / perPage), 1))
       pageLocal = Math.max(Math.ceil(totalCount / perPage), 1);
-
+    console.log(totalCount);
+    console.log("pageLocal", pageLocal);
     if (pageOriginal !== pageLocal) {
       setPage(pageLocal);
       if (displayWhat.repo !== undefined && displayWhat.repo === true) {

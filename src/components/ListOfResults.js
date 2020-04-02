@@ -23,11 +23,14 @@ export default class ListOfResults extends Component {
     let array = [];
     let upperLimit = 5 * Math.ceil(props.page / 5);
     let base = upperLimit - 4;
+
     let totalCount =
       props.displayWhat.issue === true
         ? props.issues.total_count
         : props.repos.total_count;
     let maxPage = Math.ceil(totalCount / this.props.perPage);
+    if (maxPage !== NaN) maxPage = 1;
+    console.log("Max Page", maxPage);
     if (upperLimit > maxPage) upperLimit = maxPage;
     if (base > maxPage || maxPage === undefined) upperLimit = base;
 
