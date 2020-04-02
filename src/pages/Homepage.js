@@ -93,6 +93,8 @@ export default function Homepage(props) {
               issues={props.issues}
               repos={props.repos}
               token={token}
+              setRepos={props.setRepos}
+              setIssues={props.setIssues}
               apiSearchIssuesMethod={query => props.apiSearchIssues(query)}
               displayWhat={props.displayWhat}
               page={props.page}

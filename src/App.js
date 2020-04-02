@@ -15,10 +15,13 @@ export default function App() {
     const [token, setToken] = useState(null);
     const [page, setPage] = useState(1);
     const history = useHistory();
-
+    
     function setTokenFunc() {
-        // const clientId = prompt('input your cliend id');
-        const clientId = prompt('input your client id');
+        let url = '';
+        if (!localStorage.getItem("token")){
+            const clientId = prompt('input your client id');
+            url = `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
+            }
         const existingToken = localStorage.getItem("token");
         const accessToken =
             window.location.search.split("=")[0] === "?access_token"
@@ -26,9 +29,7 @@ export default function App() {
                 : null;
 
         if (!accessToken && !existingToken) {
-            window.location.replace(
-                `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
-            );
+            window.location.replace(url);
         }
 
         if (accessToken) {
@@ -121,6 +122,8 @@ export default function App() {
                     setPage={setPage}
                     perPage={perPage}
                     history={history}
+                    setRepos={setRepos}
+                    setIssues={setIssues}
                     {...props} />} exact />
                 <Route path='/issue/:user/:repos/:ids' render={(props) => <DetailIssue apiSearchIssues={apiSearchIssues} {...props} />} />
                 <Route path='/addnewissue/:user/:repos' render={(props) => <AddNewIssue apiSearchIssues={apiSearchIssues} {...props} />} />

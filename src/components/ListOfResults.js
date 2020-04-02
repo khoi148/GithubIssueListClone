@@ -56,13 +56,10 @@ export default class ListOfResults extends Component {
       });
     }
   }
-  
-
-  
 
   onHandleClickNewIssue = () => {
     if (this.props.currentQuery.includes("/") && this.props.currentQuery.split("/").length === 2) {
-      this.props.history.push(`${`/addnewissue/${this.props.issues.items[0].repository_url.split("repos/")[1].split("/")[0]}/${this.props.issues.items[0].repository_url.split("repos/")[1].split("/")[1]}`}`)
+      this.props.history.push('/addnewissue/'+`${this.props.currentQuery}`)
       } else {
       const user = prompt('Input owner!')
       const reps = prompt('Input repository!')
@@ -73,6 +70,7 @@ export default class ListOfResults extends Component {
       }
     }
   }
+
 
   render() {
     let totalCountRender =
@@ -146,29 +144,12 @@ export default class ListOfResults extends Component {
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    Label
-                  </button>
-                  <div className="dropdown-menu">
-                    <div>Notifications</div>
-                    ....
-                  </div>
-                </div>
-              </div>
-
-              <div className="btn-group p-0 ml-2" style={{ height: "30px" }}>
-                <div className="btn-group">
-                  <button
-                    className="btn btn-outline-secondary btn-sm dropdown-toggle"
-                    type="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
                     Sort
                   </button>
                   <div className="dropdown-menu">
-                    <div>Notifications</div>
-                    ....
+                    <a className="dropdown-item" onClick={()=> {this.props.setIssues(this.props.issues.items.filter(item => item.state === 'open'))}}>By Open</a>
+                    <a className="dropdown-item" onClick={()=> {this.props.setIssues(this.props.issues.items.filter(item => item.state === 'closed'))}}>By Closed</a>
+                    <a className="dropdown-item" onClick={()=> {this.props.setIssues(this.props.issues.items.sort((a,b) => a.created_at - b.created_at))}}>By Newest</a>
                   </div>
                 </div>
               </div>
@@ -230,21 +211,15 @@ export default class ListOfResults extends Component {
                 this.state.arrayOfPages.map((item, index) => {
                   return (
                     <Pagination.Item
-                      id={`${item}`}
+                      id={item}
                       onClick={event => this.paginationClick(event)}
                     >
                       {item}
                     </Pagination.Item>
                   );
-                })}
+                })
+              }
               <Pagination.Ellipsis />
-              {/* <Pagination.Ellipsis />
-            <Pagination.Item>{10}</Pagination.Item>
-            <Pagination.Item>{11}</Pagination.Item>
-            <Pagination.Item active>{12}</Pagination.Item>
-            <Pagination.Item>{13}</Pagination.Item>
-            <Pagination.Ellipsis />
-            <Pagination.Item>{20}</Pagination.Item>}  */}
               {this.props.page + 5 <=
                 Math.ceil(totalCountRender / this.props.perPage) && (
                 <Pagination.Item
