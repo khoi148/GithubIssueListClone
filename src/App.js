@@ -7,7 +7,7 @@ import AddNewIssue from './pages/AddNewIssue';
 export default function App() {
   const [token, setToken] = useState(null);
   function setTokenFunc() {
-    const clientId = process.env.OAUTH_CLIENT_ID;
+    const clientId = prompt('input your cliend id');
     const existingToken = localStorage.getItem("token");
     const accessToken =
             window.location.search.split("=")[0] === "?access_token"
