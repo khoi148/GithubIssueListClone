@@ -19,7 +19,7 @@ export default function App() {
     function setTokenFunc() {
         let url = '';
         if (!localStorage.getItem("token")){
-            const clientId = prompt('input your client id');
+            const clientId = process.env.CLIENTID;
             url = `https://github.com/login/oauth/authorize?scope=user:email,repo&client_id=${clientId}`
             }
         const existingToken = localStorage.getItem("token");
